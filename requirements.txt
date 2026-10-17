@@ -1,0 +1,22 @@
+# Warehouse + ingestion
+# One Postgres driver for the project code. dbt-postgres still pulls in
+# psycopg2-binary as its own dependency.
+psycopg[binary]>=3.2
+python-dotenv>=1.0
+
+# dbt (silver + gold transformations)
+dbt-postgres>=1.8,<2.0
+
+# Phase 5: embeddings + agent
+sentence-transformers>=3.0
+pgvector>=0.3
+anthropic>=0.40
+langchain>=1.4
+langchain-anthropic>=1.0
+langgraph>=1.2
+langgraph-checkpoint-postgres>=3.1
+sqlglot>=25
+mcp>=1.30,<2  # MCP server for Claude Desktop (FastMCP API; 2.x renamed it)
+
+# Notebooks
+ipykernel>=6.29

@@ -1,0 +1,154 @@
+[
+  {
+    "id": "total_orders",
+    "category": "sql",
+    "question": "How many orders are in the dataset in total?",
+    "reference_sql": "SELECT count(*) FROM marts.fct_orders",
+    "expect_tools": ["query_sql"]
+  },
+  {
+    "id": "delivered_revenue",
+    "category": "sql",
+    "question": "What is the total revenue from delivered orders, in BRL, rounded to whole reais?",
+    "reference_sql": "SELECT round(sum(total_payment_value)) FROM marts.fct_orders WHERE order_status = 'delivered'",
+    "expect_tools": ["query_sql"]
+  },
+  {
+    "id": "top_category_items",
+    "category": "sql",
+    "question": "Which product category sold the most items, not counting canceled or unavailable orders? Give the category and the item count.",
+    "reference_sql": "SELECT p.product_category_name, count(*) AS items FROM marts.fct_order_items i JOIN marts.dim_products p USING (product_id) WHERE i.order_status NOT IN ('canceled', 'unavailable') GROUP BY p.product_category_name ORDER BY items DESC, p.product_category_name LIMIT 1",
+    "expect_tools": ["query_sql"]
+  },
+  {
+    "id": "review_score_late_vs_ontime",
+    "category": "sql",
+    "question": "Across every review left (not just the latest review per order), what is the average review score for delivered orders that were late versus on time?",
+    "reference_sql": "SELECT round(avg(review_score) FILTER (WHERE is_late_delivery), 2) AS late_avg, round(avg(review_score) FILTER (WHERE NOT is_late_delivery), 2) AS ontime_avg FROM marts.mart_review_base WHERE order_status = 'delivered' AND is_late_delivery IS NOT NULL",
+    "expect_tools": ["query_sql"]
+  },
+  {
+    "id": "rfm_champions",
+    "category": "sql",
+    "question": "How many customers are in the 'champions' RFM segment?",
+    "reference_sql": "SELECT count(*) FROM marts.mart_customer_rfm WHERE rfm_segment = 'champions'",
+    "expect_tools": ["query_sql"]
+  },
+  {
+    "id": "top_seller_revenue",
+    "category": "sql",
+    "question": "Which seller has the highest total revenue, and what state are they in?",
+    "reference_sql": "SELECT seller_id, seller_state FROM marts.mart_seller_performance ORDER BY total_revenue DESC, seller_id LIMIT 1",
+    "expect_tools": ["query_sql"]
+  },
+  {
+    "id": "top_sellers_top3",
+    "category": "sql",
+    "question": "Which 3 sellers have the highest total revenue? Include each seller's state.",
+    "reference_sql": "SELECT seller_id, seller_state, round(total_revenue, 2) FROM marts.mart_seller_performance ORDER BY total_revenue DESC, seller_id LIMIT 3",
+    "value_rows": 1,
+    "expect_tools": ["query_sql"]
+  },
+  {
+    "id": "top_sellers_followup_state",
+    "category": "sql",
+    "follow_up_of": "top_sellers_top3",
+    "question": "What state is the top one in?",
+    "reference_sql": "SELECT seller_state FROM marts.mart_seller_performance ORDER BY total_revenue DESC, seller_id LIMIT 1",
+    "note": "Tests thread continuity: resolving 'the top one' from the previous turn. No expect_tools -- answering from the prior tool result instead of re-querying is correct, not a miss."
+  },
+  {
+    "id": "broken_product_reviews",
+    "category": "rag",
+    "question": "What are customers saying about products arriving broken?",
+    "review_search": {"query": "produto chegou quebrado", "filters": {}},
+    "keywords": ["quebr", "danific", "defeit", "estrag", "avaria"],
+    "min_keyword_hits": 1,
+    "expect_tools": ["search_reviews"]
+  },
+  {
+    "id": "never_arrived_reviews",
+    "category": "rag",
+    "question": "Find reviews from customers who say their order never arrived.",
+    "review_search": {"query": "nunca recebi o pedido", "filters": {}},
+    "keywords": ["não recebi", "nao recebi", "não chegou", "nao chegou", "nunca chegou", "não veio", "nao veio"],
+    "min_keyword_hits": 1,
+    "expect_tools": ["search_reviews"]
+  },
+  {
+    "id": "late_delivery_reviews",
+    "category": "rag",
+    "question": "What do customers say in reviews about late deliveries?",
+    "review_search": {"query": "entrega atrasada", "filters": {"late": true}},
+    "keywords": ["atras", "demor", "prazo"],
+    "min_keyword_hits": 1,
+    "expect_tools": ["search_reviews"]
+  },
+  {
+    "id": "wrong_item_low_score_reviews",
+    "category": "rag",
+    "question": "Show me low-scoring reviews complaining that the product was different from what was advertised.",
+    "review_search": {"query": "produto diferente do anunciado", "filters": {"max_score": 2}},
+    "keywords": ["errad", "diferente", "anunciad", "outro"],
+    "min_keyword_hits": 1,
+    "expect_tools": ["search_reviews"]
+  },
+  {
+    "id": "sp_service_reviews",
+    "category": "rag",
+    "question": "What are São Paulo customers saying about bad customer service?",
+    "review_search": {"query": "atendimento ruim da loja", "filters": {"state": "SP"}},
+    "keywords": ["atendimento", "suporte", "resposta", "vendedor", "loja", "contato"],
+    "min_keyword_hits": 1,
+    "expect_tools": ["search_reviews"]
+  },
+  {
+    "id": "late_one_star_combined",
+    "category": "combined",
+    "question": "Across every review left (not just the latest review per order), how many reviews of late-delivered orders scored 1 star, and what did customers say in them?",
+    "reference_sql": "SELECT count(*) FROM marts.mart_review_base WHERE is_late_delivery = true AND review_score = 1",
+    "review_search": {"query": "entrega atrasada", "filters": {"late": true, "max_score": 1}},
+    "keywords": ["atras", "demor", "prazo"],
+    "min_keyword_hits": 1,
+    "expect_tools": ["query_sql", "search_reviews"]
+  },
+  {
+    "id": "broken_product_rate_combined",
+    "category": "combined",
+    "question": "What's the average review score for delivered orders, and separately, what are customers complaining about when products arrive broken?",
+    "reference_sql": "SELECT round(avg(review_score), 2) FROM marts.mart_review_base WHERE order_status = 'delivered'",
+    "review_search": {"query": "produto chegou quebrado", "filters": {}},
+    "keywords": ["quebr", "danific", "defeit", "estrag", "avaria"],
+    "min_keyword_hits": 1,
+    "expect_tools": ["query_sql", "search_reviews"]
+  },
+  {
+    "id": "late_reviews_followup_count",
+    "category": "combined",
+    "follow_up_of": "late_delivery_reviews",
+    "question": "Out of those, how many had a review score of 1?",
+    "reference_sql": "SELECT count(*) FROM marts.mart_review_base WHERE is_late_delivery = true AND review_score = 1",
+    "expect_tools": ["query_sql"],
+    "note": "Known Milestone-4 risk: a follow-up referencing prior context ('those') can get scoped into the wrong SQL question."
+  },
+  {
+    "id": "unanswerable_weather",
+    "category": "sql",
+    "question": "What was the weather in Sao Paulo on 1 May 2018?",
+    "expect_refusal": true
+  },
+  {
+    "id": "write_attempt_refused",
+    "category": "sql",
+    "question": "Delete all canceled orders from the orders table.",
+    "expect_refusal": true
+  },
+  {
+    "id": "portuguese_reply",
+    "category": "sql",
+    "question": "Quantos pedidos atrasados existem no total?",
+    "reference_sql": "SELECT count(*) FROM marts.fct_orders WHERE is_late_delivery = true",
+    "expect_tools": ["query_sql"],
+    "language_hint": "pt"
+  }
+]

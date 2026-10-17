@@ -1,0 +1,72 @@
+models:
+  - name: stg__customers
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+      - name: customer_unique_id
+        data_tests: [not_null]
+      - name: customer_zip_code_prefix
+        data_tests: [not_null]
+
+  - name: stg__geolocation
+    columns:
+      - name: geolocation_zip_code_prefix
+        data_tests: [not_null]
+
+  - name: stg__orders
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+      - name: customer_id
+        data_tests: [not_null]
+
+  - name: stg__order_items
+    data_tests:
+      - unique:
+          column_name: "order_id || '-' || order_item_id"
+    columns:
+      - name: order_id
+        data_tests: [not_null]
+      - name: order_item_id
+        data_tests: [not_null]
+      - name: product_id
+        data_tests: [not_null]
+      - name: seller_id
+        data_tests: [not_null]
+
+  - name: stg__order_payments
+    data_tests:
+      - unique:
+          column_name: "order_id || '-' || payment_sequential"
+    columns:
+      - name: order_id
+        data_tests: [not_null]
+      - name: payment_sequential
+        data_tests: [not_null]
+
+  - name: stg__order_reviews
+    data_tests:
+      - unique:
+          column_name: "review_id || '-' || order_id"
+    columns:
+      - name: review_id
+        data_tests: [not_null]
+      - name: order_id
+        data_tests: [not_null]
+
+  - name: stg__product_category
+    columns:
+      - name: product_category_name
+        data_tests: [unique, not_null]
+
+  - name: stg__products
+    columns:
+      - name: product_id
+        data_tests: [unique, not_null]
+
+  - name: stg__sellers
+    columns:
+      - name: seller_id
+        data_tests: [unique, not_null]
+      - name: seller_zip_code_prefix
+        data_tests: [not_null]

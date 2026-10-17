@@ -1,0 +1,33 @@
+# secrets
+.env
+
+# python
+.venv/
+__pycache__/
+*.pyc
+
+# dbt
+dbt/**/target/
+dbt/**/logs/
+dbt/**/dbt_packages/
+dbt/**/.user.yml
+
+# dataset (large, download it via the Kaggle link in README instead of committing)
+data/raw/*
+!data/raw/.gitkeep
+
+# runtime logs
+logs/
+
+# Claude Code local session state
+.claude/
+
+# OS
+.DS_Store
+
+# learning-journal docs: Claude-session context, live implementation notes, and
+# exploration notebooks. Not part of the published project; kept local only.
+TUTOR.md
+rag_pipeline.md
+BACKLOG.md
+notebooks/

@@ -1,0 +1,44 @@
+models:
+  - name: mart_customer_rfm
+    description: >
+      One row per real customer (`customer_unique_id`) — Recency/Frequency/Monetary
+      segmentation, built from `fct_orders` joined to `dim_customers`. Only orders that
+      are not `canceled` or `unavailable` count toward the RFM metrics, since those
+      never converted into real revenue; customers whose only order(s) were
+      canceled/unavailable are excluded from this mart entirely. Scores are quintiles
+      (1 = worst, 5 = best) computed by ranking all customers in the model against each
+      other, so they are only meaningful relative to the current customer base, not to
+      an absolute scale.
+    columns:
+      - name: customer_unique_id
+        description: Natural key of the model, one row per real customer.
+        data_tests: [unique, not_null]
+      - name: customer_city
+        description: Customer's city, from `dim_customers` (their most recent order address).
+      - name: customer_state
+        description: Customer's two-letter state code, from `dim_customers`.
+      - name: recency_days
+        description: Days between the customer's most recent (non-canceled) order and the snapshot date (the day after the latest purchase date in the whole dataset). Smaller = more recent.
+      - name: frequency
+        description: Count of distinct non-canceled/unavailable orders this customer has placed.
+      - name: monetary
+        description: Sum of `total_payment_value` across this customer's non-canceled/unavailable orders, in Brazilian Real (BRL).
+      - name: recency_score
+        description: Quintile 1-5 of `recency_days` across all customers in this mart; 5 = most recent, 1 = least recent.
+      - name: frequency_score
+        description: Quintile 1-5 of `frequency` across all customers in this mart; 5 = most orders, 1 = fewest.
+      - name: monetary_score
+        description: Quintile 1-5 of `monetary` across all customers in this mart; 5 = highest spend, 1 = lowest.
+      - name: rfm_score
+        description: Sum of `recency_score` + `frequency_score` + `monetary_score` (range 3-15). A simple combined ranking; `rfm_segment` is the more interpretable label.
+      - name: rfm_segment
+        description: >
+          Rule-based label from the three scores: 'champions' (recent, frequent, high
+          spend), 'loyal_customers' (recent and reasonably frequent), 'recent_customers'
+          (recent but low frequency/spend), 'at_risk' (not recent but were frequent
+          buyers), 'hibernating' (not recent, low frequency), 'needs_attention'
+          (everything else — mid-recency customers that don't fit the other buckets).
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['champions', 'loyal_customers', 'recent_customers', 'at_risk', 'hibernating', 'needs_attention']

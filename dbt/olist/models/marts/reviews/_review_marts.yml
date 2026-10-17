@@ -1,0 +1,50 @@
+models:
+  - name: mart_review_base
+    description: >
+      One row per review, with order context attached — the source table for the
+      review-analysis / RAG pipeline. Every review in `stg__order_reviews` is present
+      (no filtering, no dedup), so an order with several reviews appears several times
+      here; use `mart_review_base` (not `fct_orders.review_id`, which only keeps the
+      latest) when every review matters.
+    data_tests:
+      - unique:
+          column_name: "review_id || '-' || order_id"
+    columns:
+      - name: review_id
+        description: Review identifier. Not unique alone — the same `review_id` can appear against more than one `order_id`. The row's natural key is (`review_id`, `order_id`).
+        data_tests: [not_null]
+      - name: order_id
+        description: FK to `fct_orders` (order the review was left for).
+        data_tests: [not_null]
+      - name: review_score
+        description: Star rating, 1 (worst) to 5 (best).
+      - name: review_comment_title
+        description: Free-text review title, in Portuguese. Frequently null — most reviews have no title.
+      - name: review_comment_message
+        description: Free-text review body, in Portuguese. Frequently null — this is the field an LLM/RAG pipeline would embed or summarize when present.
+      - name: review_creation_date
+        description: Date the review was submitted by the customer.
+      - name: review_answer_timestamp
+        description: Timestamp Olist responded to the review.
+      - name: review_response_days
+        description: Days between `review_creation_date` and `review_answer_timestamp`.
+      - name: order_status
+        description: Lifecycle status of the reviewed order, from `fct_orders` (e.g. 'delivered', 'canceled').
+      - name: order_purchase_timestamp
+        description: When the reviewed order was purchased, from `fct_orders`.
+      - name: order_delivered_customer_date
+        description: When the reviewed order was delivered, from `fct_orders`. Null if never delivered — useful context for understanding a negative review (e.g. "never arrived").
+      - name: order_estimated_delivery_date
+        description: Delivery estimate shown to the customer for the reviewed order, from `fct_orders`.
+      - name: is_late_delivery
+        description: Whether the reviewed order was delivered late, from `fct_orders`. Null if never delivered.
+      - name: delivery_days
+        description: Purchase-to-delivery days for the reviewed order, from `fct_orders`. Null if never delivered.
+      - name: total_payment_value
+        description: Total amount paid on the reviewed order, from `fct_orders`, in Brazilian Real (BRL).
+      - name: customer_unique_id
+        description: FK to `dim_customers` — the person who placed the reviewed order.
+      - name: customer_city
+        description: City of the reviewing customer, from `fct_orders`/`dim_customers`.
+      - name: customer_state
+        description: Two-letter state code of the reviewing customer, from `fct_orders`/`dim_customers`.

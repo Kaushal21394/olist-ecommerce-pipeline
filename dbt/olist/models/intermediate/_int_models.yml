@@ -1,0 +1,21 @@
+models:
+  - name: int__geolocation_deduped
+    columns:
+      - name: geolocation_zip_code_prefix
+        data_tests: [unique, not_null]
+
+  - name: int__order_payments_agg
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+
+  - name: int__order_reviews_agg
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+      - name: review_score
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5]
+                quote: false

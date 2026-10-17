@@ -1,0 +1,93 @@
+models:
+  - name: dim_customers
+    description: >
+      One row per real-world customer (`customer_unique_id`), not per order. Olist issues a
+      new `customer_id` for every order a person places, so this model collapses those back
+      to one person and carries the address from their most recent order. Use
+      `customer_id_count` to tell a repeat buyer (address may have changed over time) from a
+      one-time buyer.
+    columns:
+      - name: customer_unique_id
+        description: Natural key of the model, one row per real customer. Join fact tables to this, not to `customer_id`.
+        data_tests: [unique, not_null]
+      - name: customer_zip_code_prefix
+        description: First 5 digits of the customer's zip code, from their most recent order. Leading zeros are dropped (integer type), so do not display this as a zip code.
+      - name: customer_city
+        description: City name from the customer's most recent order, as entered by the seller/platform (free text, not standardized).
+      - name: customer_state
+        description: Two-letter Brazilian state code (e.g. 'SP', 'RJ') from the customer's most recent order.
+      - name: customer_lat
+        description: Approximate latitude for `customer_zip_code_prefix`, averaged across geolocation points for that prefix. Null for ~280 customers whose zip prefix has no geolocation match.
+      - name: customer_lng
+        description: Approximate longitude for `customer_zip_code_prefix`. Null for ~280 customers whose zip prefix has no geolocation match.
+      - name: customer_id_count
+        description: Number of distinct order-level `customer_id`s this person has had, i.e. how many times they've ordered. 1 means a one-time buyer; >1 means a repeat buyer.
+
+  - name: dim_sellers
+    description: One row per seller, with the zip prefix, city, state and approximate coordinates of their registered address.
+    columns:
+      - name: seller_id
+        description: Natural key of the model, one row per seller.
+        data_tests: [unique, not_null]
+      - name: seller_zip_code_prefix
+        description: First 5 digits of the seller's zip code. Leading zeros are dropped (integer type), so do not display this as a zip code.
+      - name: seller_city
+        description: Seller's registered city name (free text, not standardized).
+      - name: seller_state
+        description: Two-letter Brazilian state code (e.g. 'SP', 'RJ') for the seller.
+      - name: seller_lat
+        description: Approximate latitude for `seller_zip_code_prefix`. Null for 7 sellers whose zip prefix has no geolocation match.
+      - name: seller_lng
+        description: Approximate longitude for `seller_zip_code_prefix`. Null for 7 sellers whose zip prefix has no geolocation match.
+
+  - name: dim_products
+    description: One row per product, with category (English), physical dimensions, and a derived volume.
+    columns:
+      - name: product_id
+        description: Natural key of the model, one row per product.
+        data_tests: [unique, not_null]
+      - name: product_category_name
+        description: Product category in English. Falls back to the Portuguese name for the 2 categories that have no translation on file.
+      - name: product_category_name_portuguese
+        description: Original product category name as sold, in Portuguese.
+      - name: product_name_length
+        description: Character count of the product name as listed on the marketplace.
+      - name: product_description_length
+        description: Character count of the product description as listed on the marketplace.
+      - name: product_photos_qty
+        description: Number of photos on the product listing.
+      - name: product_weight_g
+        description: Product weight in grams.
+      - name: product_length_cm
+        description: Product length in centimeters.
+      - name: product_height_cm
+        description: Product height in centimeters.
+      - name: product_width_cm
+        description: Product width in centimeters.
+      - name: product_volume_cm3
+        description: Derived volume (length × height × width) in cubic centimeters. Not a source column.
+
+  - name: dim_date
+    description: Generated calendar spine, one row per day from 2016-01-01 through 2018-12-31 — covers the full Olist order history (2016-09 to 2018-11) with buffer on both ends.
+    columns:
+      - name: date_day
+        description: Calendar date. Natural key of the model.
+        data_tests: [unique, not_null]
+      - name: year
+        description: Calendar year, e.g. 2018.
+      - name: quarter
+        description: Calendar quarter, 1-4.
+      - name: month
+        description: Calendar month number, 1-12.
+      - name: month_name
+        description: Full month name, e.g. 'January'.
+      - name: month_start
+        description: First day of the calendar month containing `date_day`. Useful as a monthly grouping key.
+      - name: iso_week
+        description: ISO week-of-year number.
+      - name: day_of_week
+        description: ISO day of week, 1 (Monday) through 7 (Sunday).
+      - name: day_name
+        description: Full weekday name, e.g. 'Monday'.
+      - name: is_weekend
+        description: True if `date_day` falls on Saturday or Sunday.

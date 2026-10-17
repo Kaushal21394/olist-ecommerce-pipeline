@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Olist Monthly Performance, Sep 2016 to Sep 2018</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    --bg: #f4f5f7;
+    --card: #ffffff;
+    --text: #1b1f27;
+    --muted: #5d6675;
+    --border: #e3e6eb;
+    --grid: #e8ebf0;
+    --row-hover: #f6f8fb;
+    --revenue: #2563eb;
+    --orders: rgba(37, 99, 235, 0.22);
+    --review: #15803d;
+    --late: #c2410c;
+    --low-volume: #9aa3b2;
+    --radius: 10px;
+    --gap: 16px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171c;
+      --card: #1d2128;
+      --text: #e8ebf0;
+      --muted: #9aa3b2;
+      --border: #2c323c;
+      --grid: #2a2f38;
+      --row-hover: #232831;
+      --revenue: #60a5fa;
+      --orders: rgba(96, 165, 250, 0.25);
+      --review: #4ade80;
+      --late: #fb923c;
+      --low-volume: #6b7586;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171c;
+    --card: #1d2128;
+    --text: #e8ebf0;
+    --muted: #9aa3b2;
+    --border: #2c323c;
+    --grid: #2a2f38;
+    --row-hover: #232831;
+    --revenue: #60a5fa;
+    --orders: rgba(96, 165, 250, 0.25);
+    --review: #4ade80;
+    --late: #fb923c;
+    --low-volume: #6b7586;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 24px 20px 40px; }
+  header { margin-bottom: 20px; }
+  h1 { font-size: 24px; font-weight: 650; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .subtitle { color: var(--muted); margin: 0; font-size: 13px; }
+
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap); margin-bottom: var(--gap); }
+  .card, .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .card { padding: 16px 18px; }
+  .card-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+  .card-value { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .card-note { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .panel { padding: 16px 18px 18px; margin-bottom: var(--gap); }
+  .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .panel h2 { font-size: 15px; font-weight: 600; margin: 0; }
+  .panel-sub { font-size: 12px; color: var(--muted); }
+  .chart-box { position: relative; height: 340px; }
+  .chart-box.short { height: 260px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
+  .two-col .panel { margin-bottom: var(--gap); }
+
+  .toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); cursor: pointer; margin-bottom: var(--gap); }
+  .toggle input { accent-color: var(--revenue); width: 15px; height: 15px; }
+
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { padding: 9px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--border); }
+  th:first-child, td:first-child { text-align: left; }
+  th {
+    font-size: 12px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    cursor: pointer; user-select: none; border-bottom-width: 2px;
+  }
+  th:hover { color: var(--text); }
+  th .arrow { display: inline-block; width: 10px; margin-left: 4px; font-size: 10px; }
+  tbody tr:hover { background: var(--row-hover); }
+  tbody tr:last-child td { border-bottom: none; }
+  tr.low td { color: var(--muted); }
+  .tag {
+    display: inline-block; margin-left: 8px; padding: 1px 7px; font-size: 11px;
+    border: 1px solid var(--border); border-radius: 999px; color: var(--muted);
+  }
+  .empty { color: var(--muted); }
+
+  .notes { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.6; }
+  .notes p { margin: 0 0 4px; }
+
+  @media (max-width: 900px) {
+    .cards { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .wrap { padding: 16px 12px 32px; }
+    h1 { font-size: 20px; }
+    .card-value { font-size: 22px; }
+    .chart-box { height: 280px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Olist Monthly Performance, Sep 2016 to Sep 2018</h1>
+    <p class="subtitle">Orders grouped by purchase month. Canceled and unavailable orders excluded.</p>
+  </header>
+
+  <section class="cards" aria-label="Summary">
+    <div class="card">
+      <div class="card-label">Total orders</div>
+      <div class="card-value" id="kpi-orders">-</div>
+      <div class="card-note" id="kpi-orders-note"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Total revenue (BRL)</div>
+      <div class="card-value" id="kpi-revenue">-</div>
+      <div class="card-note" id="kpi-revenue-note"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Avg review score</div>
+      <div class="card-value" id="kpi-review">-</div>
+      <div class="card-note" id="kpi-review-note"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Avg late-delivery rate</div>
+      <div class="card-value" id="kpi-late">-</div>
+      <div class="card-note" id="kpi-late-note"></div>
+    </div>
+  </section>
+
+  <label class="toggle">
+    <input type="checkbox" id="hide-low">
+    Hide low-volume months (Sep 2016, Sep 2018) from the charts
+  </label>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Revenue and orders</h2>
+      <span class="panel-sub">Revenue (line, left axis) · Orders (bars, right axis)</span>
+    </div>
+    <div class="chart-box"><canvas id="chart-revenue" role="img" aria-label="Monthly revenue line with monthly orders as bars"></canvas></div>
+  </section>
+
+  <div class="two-col">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Average review score</h2>
+        <span class="panel-sub">1 to 5 stars</span>
+      </div>
+      <div class="chart-box short"><canvas id="chart-review" role="img" aria-label="Monthly average review score"></canvas></div>
+    </section>
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Late deliveries</h2>
+        <span class="panel-sub">% of delivered orders</span>
+      </div>
+      <div class="chart-box short"><canvas id="chart-late" role="img" aria-label="Monthly late-delivery percentage"></canvas></div>
+    </section>
+  </div>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Monthly numbers</h2>
+      <span class="panel-sub">Click a column header to sort</span>
+    </div>
+    <div class="table-wrap">
+      <table id="data-table">
+        <thead>
+          <tr>
+            <th data-key="month">Month<span class="arrow"></span></th>
+            <th data-key="orders">Orders<span class="arrow"></span></th>
+            <th data-key="revenue">Revenue (BRL)<span class="arrow"></span></th>
+            <th data-key="review">Avg review score<span class="arrow"></span></th>
+            <th data-key="latePct">Late deliveries<span class="arrow"></span></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="notes">
+    <p><strong>Definitions.</strong> Orders and revenue count every order except canceled and unavailable ones; revenue is total payment value. Late % is late orders divided by orders with a delivery date. Review score is the mean of each order's latest review, over reviewed orders.</p>
+    <p><strong>Summary cards.</strong> Totals cover all months. Averages are the plain mean of the monthly values and leave out the low-volume months (Sep 2016 and Sep 2018). November 2016 has no orders in the data.</p>
+    <p>Source: Olist marts (fct_orders).</p>
+  </div>
+</div>
+
+<script>
+  // Aggregated query results, one row per month. review and latePct are null when undefined.
+  const LOW_VOLUME_MONTHS = ["2016-09", "2018-09"];
+  const RAW_DATA = [
+    ["2016-09", 2, 136.23, 1.00, 100.0],
+    ["2016-10", 293, 51657.53, 3.79, 1.1],
+    ["2016-11", 0, 0, null, null],
+    ["2016-12", 1, 19.62, 5.00, 0.0],
+    ["2017-01", 787, 137006.76, 4.09, 3.1],
+    ["2017-02", 1718, 283621.94, 4.10, 3.2],
+    ["2017-03", 2617, 425656.40, 4.13, 5.6],
+    ["2017-04", 2377, 405988.38, 4.07, 7.9],
+    ["2017-05", 3640, 582926.16, 4.18, 3.6],
+    ["2017-06", 3205, 499827.47, 4.18, 3.9],
+    ["2017-07", 3946, 578858.58, 4.23, 3.4],
+    ["2017-08", 4272, 662071.77, 4.27, 3.3],
+    ["2017-09", 4227, 717195.22, 4.22, 5.2],
+    ["2017-10", 4547, 764785.28, 4.17, 5.3],
+    ["2017-11", 7423, 1172639.23, 3.95, 14.3],
+    ["2017-12", 5620, 861914.46, 4.04, 8.4],
+    ["2018-01", 7187, 1102639.41, 4.07, 6.6],
+    ["2018-02", 6625, 979966.23, 3.86, 16.0],
+    ["2018-03", 7168, 1152736.74, 3.76, 21.4],
+    ["2018-04", 6919, 1156303.91, 4.17, 5.3],
+    ["2018-05", 6833, 1145748.63, 4.21, 8.2],
+    ["2018-06", 6145, 1020494.29, 4.29, 1.4],
+    ["2018-07", 6233, 1039880.16, 4.29, 4.5],
+    ["2018-08", 6421, 996896.15, 4.29, 10.4],
+    ["2018-09", 1, 166.46, 1.00, null]
+  ];
+
+  const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const data = RAW_DATA.map(([month, orders, revenue, review, latePct]) => {
+    const [year, month_number] = month.split("-");
+    return {
+      month,
+      label: MONTH_NAMES[Number(month_number) - 1] + " " + year,
+      orders,
+      revenue,
+      review,
+      latePct,
+      lowVolume: LOW_VOLUME_MONTHS.includes(month)
+    };
+  });
+
+  const number_format = new Intl.NumberFormat("en-US");
+  const brl_whole = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+  const brl_cents = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const formatBRL = (value, cents = false) => "R$ " + (cents ? brl_cents : brl_whole).format(value);
+  const formatPct = (value) => value.toFixed(1) + "%";
+
+  const mean = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
+
+  // ---- Summary cards ----
+  function renderCards() {
+    const core = data.filter((row) => !row.lowVolume);
+    const reviews = core.map((row) => row.review).filter((value) => value !== null);
+    const late_rates = core.map((row) => row.latePct).filter((value) => value !== null);
+
+    document.getElementById("kpi-orders").textContent = number_format.format(data.reduce((sum, row) => sum + row.orders, 0));
+    document.getElementById("kpi-orders-note").textContent = "All months";
+    document.getElementById("kpi-revenue").textContent = formatBRL(data.reduce((sum, row) => sum + row.revenue, 0));
+    document.getElementById("kpi-revenue-note").textContent = "All months";
+    document.getElementById("kpi-review").textContent = mean(reviews).toFixed(2);
+    document.getElementById("kpi-review-note").textContent = "Mean of " + reviews.length + " monthly values";
+    document.getElementById("kpi-late").textContent = formatPct(mean(late_rates));
+    document.getElementById("kpi-late-note").textContent = "Mean of " + late_rates.length + " monthly values";
+  }
+
+  // ---- Charts ----
+  const charts = {};
+  const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+  function visibleRows() {
+    return document.getElementById("hide-low").checked ? data.filter((row) => !row.lowVolume) : data;
+  }
+
+  function lowVolumeFooter(rows) {
+    return (items) => {
+      const row = rows[items[0].dataIndex];
+      if (row.orders === 0) return "No orders this month";
+      return row.lowVolume ? "Low-volume month (left out of card averages)" : "";
+    };
+  }
+
+  function baseOptions(rows) {
+    const text_color = cssVar("--muted");
+    const grid_color = cssVar("--grid");
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      animation: { duration: 250 },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { footer: lowVolumeFooter(rows) } }
+      },
+      scales: {
+        x: {
+          ticks: { color: text_color, maxRotation: 60, minRotation: 45, autoSkip: true, maxTicksLimit: 13 },
+          grid: { display: false },
+          border: { color: grid_color }
+        }
+      }
+    };
+  }
+
+  // Low-volume points are drawn hollow so they read as less reliable.
+  function pointFill(rows, color) {
+    return (context) => (rows[context.dataIndex].lowVolume ? cssVar("--card") : color);
+  }
+  function pointEdge(rows, color) {
+    return (context) => (rows[context.dataIndex].lowVolume ? cssVar("--low-volume") : color);
+  }
+
+  function lineDataset(rows, key, color, label) {
+    return {
+      label,
+      data: rows.map((row) => row[key]),
+      borderColor: color,
+      backgroundColor: color,
+      borderWidth: 2.5,
+      tension: 0.25,
+      pointRadius: 3.5,
+      pointHoverRadius: 6,
+      pointBackgroundColor: pointFill(rows, color),
+      pointBorderColor: pointEdge(rows, color),
+      pointBorderWidth: 2,
+      spanGaps: false
+    };
+  }
+
+  function buildCharts() {
+    Object.values(charts).forEach((chart) => chart.destroy());
+    const rows = visibleRows();
+    const labels = rows.map((row) => row.label);
+    const text_color = cssVar("--muted");
+    const grid_color = cssVar("--grid");
+    Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+
+    // Chart 1: revenue line (left) + orders bars (right)
+    const revenue_options = baseOptions(rows);
+    revenue_options.plugins.legend = { display: true, labels: { color: text_color, usePointStyle: true, boxWidth: 8 } };
+    revenue_options.plugins.tooltip.callbacks.label = (item) =>
+      item.dataset.yAxisID === "y_orders"
+        ? " Orders: " + number_format.format(item.parsed.y)
+        : " Revenue: " + formatBRL(item.parsed.y, true);
+    revenue_options.scales.y_revenue = {
+      position: "left",
+      beginAtZero: true,
+      title: { display: true, text: "Revenue (BRL)", color: text_color },
+      ticks: { color: text_color, callback: (value) => "R$ " + number_format.format(value) },
+      grid: { color: grid_color },
+      border: { display: false }
+    };
+    revenue_options.scales.y_orders = {
+      position: "right",
+      beginAtZero: true,
+      title: { display: true, text: "Orders", color: text_color },
+      ticks: { color: text_color, callback: (value) => number_format.format(value) },
+      grid: { drawOnChartArea: false },
+      border: { display: false }
+    };
+    charts.revenue = new Chart(document.getElementById("chart-revenue"), {
+      data: {
+        labels,
+        datasets: [
+          { ...lineDataset(rows, "revenue", cssVar("--revenue"), "Revenue (BRL)"), type: "line", yAxisID: "y_revenue", order: 0 },
+          {
+            type: "bar",
+            label: "Orders",
+            data: rows.map((row) => row.orders),
+            yAxisID: "y_orders",
+            backgroundColor: cssVar("--orders"),
+            borderWidth: 0,
+            borderRadius: 3,
+            order: 1
+          }
+        ]
+      },
+      options: revenue_options
+    });
+
+    // Chart 2: review score
+    const review_options = baseOptions(rows);
+    review_options.plugins.tooltip.callbacks.label = (item) =>
+      item.parsed.y === null ? " No reviews" : " Avg review score: " + item.parsed.y.toFixed(2);
+    review_options.scales.y = {
+      min: 1,
+      max: 5,
+      ticks: { color: text_color, stepSize: 1 },
+      grid: { color: grid_color },
+      border: { display: false }
+    };
+    charts.review = new Chart(document.getElementById("chart-review"), {
+      type: "line",
+      data: { labels, datasets: [lineDataset(rows, "review", cssVar("--review"), "Avg review score")] },
+      options: review_options
+    });
+
+    // Chart 3: late-delivery percentage
+    const late_options = baseOptions(rows);
+    late_options.plugins.tooltip.callbacks.label = (item) =>
+      item.parsed.y === null ? " No delivered orders" : " Late deliveries: " + formatPct(item.parsed.y);
+    late_options.scales.y = {
+      beginAtZero: true,
+      ticks: { color: text_color, callback: (value) => value + "%" },
+      grid: { color: grid_color },
+      border: { display: false }
+    };
+    charts.late = new Chart(document.getElementById("chart-late"), {
+      type: "line",
+      data: { labels, datasets: [lineDataset(rows, "latePct", cssVar("--late"), "Late deliveries (%)")] },
+      options: late_options
+    });
+  }
+
+  // ---- Table ----
+  const sort_state = { key: "month", direction: "asc" };
+
+  function compareRows(a, b) {
+    const a_value = a[sort_state.key];
+    const b_value = b[sort_state.key];
+    if (a_value === null && b_value === null) return 0;
+    if (a_value === null) return 1;   // nulls always last
+    if (b_value === null) return -1;
+    const result = typeof a_value === "string" ? a_value.localeCompare(b_value) : a_value - b_value;
+    return sort_state.direction === "asc" ? result : -result;
+  }
+
+  function renderTable() {
+    const body = document.querySelector("#data-table tbody");
+    body.replaceChildren();
+    [...data].sort(compareRows).forEach((row) => {
+      const tr = document.createElement("tr");
+      if (row.lowVolume) tr.className = "low";
+
+      const month_cell = document.createElement("td");
+      month_cell.textContent = row.label;
+      if (row.lowVolume) {
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = "low volume";
+        month_cell.appendChild(tag);
+      }
+      tr.appendChild(month_cell);
+
+      const cells = [
+        number_format.format(row.orders),
+        formatBRL(row.revenue, true),
+        row.review === null ? null : row.review.toFixed(2),
+        row.latePct === null ? null : formatPct(row.latePct)
+      ];
+      cells.forEach((value) => {
+        const td = document.createElement("td");
+        if (value === null) {
+          td.textContent = "-";
+          td.className = "empty";
+        } else {
+          td.textContent = value;
+        }
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
+
+    document.querySelectorAll("#data-table th").forEach((th) => {
+      const active = th.dataset.key === sort_state.key;
+      th.querySelector(".arrow").textContent = active ? (sort_state.direction === "asc" ? "▲" : "▼") : "";
+      th.setAttribute("aria-sort", active ? (sort_state.direction === "asc" ? "ascending" : "descending") : "none");
+    });
+  }
+
+  document.querySelectorAll("#data-table th").forEach((th) => {
+    th.addEventListener("click", () => {
+      const key = th.dataset.key;
+      if (sort_state.key === key) {
+        sort_state.direction = sort_state.direction === "asc" ? "desc" : "asc";
+      } else {
+        sort_state.key = key;
+        sort_state.direction = key === "month" ? "asc" : "desc";
+      }
+      renderTable();
+    });
+  });
+
+  document.getElementById("hide-low").addEventListener("change", buildCharts);
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", buildCharts);
+  new MutationObserver(buildCharts).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  renderCards();
+  renderTable();
+  buildCharts();
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+models:
+  - name: mart_delivery_performance
+    description: >
+      Delivery performance summarized by purchase month and customer state — actual vs.
+      estimated delivery, and late-delivery rate. Built from `fct_orders`; every row
+      aggregates all orders purchased in that state in that month, regardless of
+      whether they were ever delivered (see `delivered_orders` for the denominator
+      actually used in the rate).
+    data_tests:
+      - unique:
+          column_name: "purchase_month || '-' || coalesce(customer_state, 'unknown')"
+    columns:
+      - name: purchase_month
+        description: First day of the calendar month the orders in this row were purchased in (grouping key, not a full date dimension join).
+        data_tests: [not_null]
+      - name: customer_state
+        description: Two-letter Brazilian state code of the customers in this row. Can be null if the underlying order has no matched customer state.
+      - name: total_orders
+        description: Count of all orders purchased in this state/month, regardless of delivery outcome.
+      - name: delivered_orders
+        description: Count of those orders that have a delivery date on file. This is the denominator for `late_delivery_rate_pct`.
+      - name: late_orders
+        description: Count of delivered orders where delivery happened after the estimated delivery date.
+      - name: late_delivery_rate_pct
+        description: "`late_orders` / `delivered_orders`, as a percentage rounded to 1 decimal. Null if no orders in the group were delivered."
+      - name: avg_delivery_days
+        description: Average days from purchase to delivery, across delivered orders in the group.
+      - name: avg_delivery_days_vs_estimate
+        description: Average of (actual delivery date − estimated delivery date) in days, across delivered orders. Positive means deliveries ran late on average; negative means early.

@@ -1,0 +1,114 @@
+models:
+  - name: fct_orders
+    description: >
+      One row per order — the central fact table of the star schema. Combines order
+      lifecycle timestamps with aggregated payment and review data, plus the customer's
+      location. Every order placed is present here regardless of outcome; use
+      `order_status` to filter to completed/delivered orders where that matters (e.g.
+      revenue reporting should typically exclude `canceled`/`unavailable`).
+    columns:
+      - name: order_id
+        description: Natural key of the model, one row per order.
+        data_tests: [unique, not_null]
+      - name: customer_unique_id
+        description: FK to `dim_customers`. Identifies the real person who placed the order (not the per-order `customer_id`).
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_unique_id
+      - name: customer_id
+        description: Olist's per-order customer identifier (one is issued for every order, even by the same person). Kept for traceability back to `stg__orders`/`stg__customers`; join on `customer_unique_id` instead for anything customer-level.
+      - name: order_status
+        description: "Order lifecycle status as of extract time: 'delivered', 'shipped', 'canceled', 'unavailable', 'invoiced', 'processing', 'created', or 'approved'. Only 'delivered' orders reliably have delivery dates and delivery-performance metrics populated."
+      - name: order_purchase_timestamp
+        description: Timestamp the order was placed by the customer. Never null.
+      - name: order_approved_at
+        description: Timestamp payment was approved. Null for orders that never reached payment approval (~160 orders).
+      - name: order_delivered_carrier_date
+        description: Timestamp the order was handed to the logistics carrier. Null if it never shipped.
+      - name: order_delivered_customer_date
+        description: Timestamp the order was delivered to the customer. Null for orders not yet/never delivered — including a small number (8) of orders marked 'delivered' with no delivery date on file, a known source data quality gap.
+      - name: order_estimated_delivery_date
+        description: Delivery date estimate shown to the customer at purchase time. Never null.
+      - name: is_late_delivery
+        description: True if `order_delivered_customer_date` is after `order_estimated_delivery_date`. Null whenever `order_delivered_customer_date` is null (order not delivered) — do not treat null as "on time".
+      - name: delivery_days
+        description: Days elapsed from purchase to delivery. Null if not delivered.
+      - name: delivery_days_vs_estimate
+        description: Days between actual and estimated delivery (positive = late, negative = early). Null if not delivered.
+      - name: payment_count
+        description: Number of payment installments/transactions recorded for this order, from `int__order_payments_agg`. Null for the 1 order with no payment rows at all.
+      - name: payment_method_count
+        description: Number of distinct payment methods used on this order (e.g. voucher + credit card = 2).
+      - name: max_installments
+        description: Highest installment count across the order's payment transactions.
+      - name: total_payment_value
+        description: Total amount paid across all payment transactions for this order, in Brazilian Real (BRL). This is the order's revenue figure.
+      - name: review_id
+        description: ID of the most recent review for this order (by `review_answer_timestamp`), from `int__order_reviews_agg`. Null if the order was never reviewed. Orders with more than one review only surface their latest one here — see `mart_review_base` for every review.
+      - name: review_score
+        description: Star rating (1-5) of the most recent review. Null if never reviewed.
+      - name: review_creation_date
+        description: Date the most recent review was submitted. Null if never reviewed.
+      - name: review_answer_timestamp
+        description: Timestamp Olist responded to the most recent review. Null if never reviewed.
+      - name: review_count
+        description: Total number of reviews left for this order (usually 1; some orders have several).
+      - name: customer_city
+        description: City of the customer's most recent address, denormalized from `dim_customers` for convenience.
+      - name: customer_state
+        description: Two-letter state code of the customer's most recent address, denormalized from `dim_customers` for convenience.
+
+  - name: fct_order_items
+    description: >
+      One row per line item — the finest grain in the star schema, below `fct_orders`.
+      An order with multiple products, or multiple units of the same product, has
+      multiple rows here. Inner-joined to `fct_orders`, so every row belongs to a real
+      order (no orphans).
+    data_tests:
+      - unique:
+          column_name: "order_id || '-' || order_item_id"
+    columns:
+      - name: order_id
+        description: FK to `fct_orders`.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fct_orders')
+                field: order_id
+      - name: order_item_id
+        description: Sequential line-item number within the order (1, 2, 3...). Combined with `order_id`, this is the row's natural key.
+      - name: product_id
+        description: FK to `dim_products`.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_products')
+                field: product_id
+      - name: seller_id
+        description: FK to `dim_sellers`. The seller who fulfilled this specific line item (different items in the same order can come from different sellers).
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_sellers')
+                field: seller_id
+      - name: customer_unique_id
+        description: Denormalized from `fct_orders`, for convenience — the person who placed the order this item belongs to.
+      - name: shipping_limit_date
+        description: Deadline by which the seller had to hand this item to the carrier.
+      - name: price
+        description: Price of this line item alone (excludes freight), in Brazilian Real (BRL).
+      - name: freight_value
+        description: Freight/shipping cost charged for this line item, in Brazilian Real (BRL).
+      - name: item_total_value
+        description: "`price` + `freight_value`. The revenue figure to sum for seller/product-level reporting."
+      - name: order_status
+        description: Denormalized from `fct_orders` — the order's lifecycle status.
+      - name: order_purchase_timestamp
+        description: Denormalized from `fct_orders` — when the parent order was placed.
+      - name: is_late_delivery
+        description: Denormalized from `fct_orders` — whether the parent order was delivered late. Null if the order was never delivered.

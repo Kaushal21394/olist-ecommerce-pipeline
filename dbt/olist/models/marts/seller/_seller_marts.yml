@@ -1,0 +1,28 @@
+models:
+  - name: mart_seller_performance
+    description: >
+      One row per seller — revenue, order/item volume, and delivery performance.
+      Built from `fct_order_items` (line-item grain) joined to `dim_sellers`; every
+      line item the seller fulfilled is counted, across all order statuses.
+    columns:
+      - name: seller_id
+        description: Natural key of the model, one row per seller.
+        data_tests: [unique, not_null]
+      - name: seller_city
+        description: Seller's registered city, from `dim_sellers`.
+      - name: seller_state
+        description: Seller's registered two-letter state code, from `dim_sellers`.
+      - name: order_count
+        description: Number of distinct orders containing at least one item from this seller.
+      - name: item_count
+        description: Total number of line items sold by this seller (an order with 2 units of the same product counts as 2).
+      - name: total_revenue
+        description: Sum of `item_total_value` (price + freight) across all of this seller's line items, in Brazilian Real (BRL).
+      - name: avg_item_value
+        description: Average `item_total_value` per line item for this seller, in Brazilian Real (BRL).
+      - name: avg_delivery_days
+        description: Average purchase-to-delivery days across this seller's orders (order-level metric, from `fct_orders`, averaged over the seller's items). Excludes items whose order was never delivered.
+      - name: late_order_items
+        description: Count of this seller's line items belonging to orders that were delivered late.
+      - name: late_rate_pct
+        description: "`late_order_items` / `item_count`, as a percentage rounded to 1 decimal. Note the denominator is all items, including undelivered ones — this is a conservative (lower) rate, not `late_order_items` / delivered items."

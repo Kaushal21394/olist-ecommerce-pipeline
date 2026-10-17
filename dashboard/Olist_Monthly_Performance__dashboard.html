@@ -1,0 +1,1016 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Olist Monthly Performance, Sep 2016 to Sep 2018</title>
+<style>
+/* Layout: controls and period selector on top, summary cards, three linked trend charts,
+   then a scatter + state ranking row, and the monthly table. */
+:root {
+  --plane: #f9f9f7; --surface: #fcfcfb; --hover: #f2f1ed;
+  --ink: #0b0b0b; --ink-2: #52514e; --ink-3: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,.10);
+  --rev: #2a78d6; --orders: #eb6834; --review: #1baf7a; --late: #e34948;
+  --good: #006300; --bad: #b42323;
+  --accent: #2a78d6; --accent-wash: #e6eefa; --sel-fill: rgba(42,120,214,.10); --nav-dim: rgba(252,252,251,.68);
+  --shadow: 0 6px 24px rgba(0,0,0,.14);
+  --font: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --plane: #0d0d0d; --surface: #1a1a19; --hover: #232321;
+    --ink: #f0efec; --ink-2: #c3c2b7; --ink-3: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,.10);
+    --rev: #3987e5; --orders: #d95926; --review: #199e70; --late: #e66767;
+    --good: #0ca30c; --bad: #ec7b7b;
+    --accent: #3987e5; --accent-wash: #1c2a3d; --sel-fill: rgba(57,135,229,.16); --nav-dim: rgba(26,26,25,.68);
+    --shadow: 0 6px 24px rgba(0,0,0,.5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --plane: #0d0d0d; --surface: #1a1a19; --hover: #232321;
+  --ink: #f0efec; --ink-2: #c3c2b7; --ink-3: #898781;
+  --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,.10);
+  --rev: #3987e5; --orders: #d95926; --review: #199e70; --late: #e66767;
+  --good: #0ca30c; --bad: #ec7b7b;
+  --accent: #3987e5; --accent-wash: #1c2a3d; --sel-fill: rgba(57,135,229,.16); --nav-dim: rgba(26,26,25,.68);
+  --shadow: 0 6px 24px rgba(0,0,0,.5);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--plane); color: var(--ink); font-family: var(--font); font-size: 14px; line-height: 1.45; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 20px 56px; padding-inline: clamp(16px, 3vw, 32px); }
+main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+h1 { font-size: 22px; font-weight: 650; letter-spacing: -.01em; margin: 0; text-wrap: balance; }
+h2 { font-size: 15px; font-weight: 600; margin: 0; }
+p { margin: 0; }
+button, select, textarea { font: inherit; color: var(--ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 12px 24px; margin-bottom: 16px; }
+.titles { min-width: 0; display: grid; gap: 4px; }
+.sub { color: var(--ink-2); font-size: 13px; max-width: 72ch; }
+
+.seg { display: inline-flex; max-width: 100%; overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+.seg button { border: 0; background: none; color: var(--ink-2); padding: 7px 12px; cursor: pointer; white-space: nowrap; }
+.seg button + button { border-left: 1px solid var(--border); }
+.seg button:hover { background: var(--hover); }
+.seg button[aria-pressed="true"] { background: var(--accent-wash); color: var(--ink); font-weight: 600; }
+
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.field { display: inline-flex; align-items: center; gap: 8px; }
+.field label, .check { color: var(--ink-2); font-size: 13px; }
+select { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; min-width: 0; max-width: 100%; }
+.check { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.check input { width: 15px; height: 15px; accent-color: var(--accent); }
+.btn { border: 1px solid var(--border); background: var(--surface); border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+.btn:hover { background: var(--hover); }
+.link { border: 0; background: none; color: var(--accent); cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 2px; }
+
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; min-width: 0; }
+.ph { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 16px; margin-bottom: 10px; }
+.psub { color: var(--ink-2); font-size: 12.5px; }
+.hint { color: var(--ink-2); font-size: 12px; margin-top: 6px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--ink-2); font-size: 12.5px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.lg-line { width: 18px; height: 2px; background: var(--rev); border-radius: 1px; }
+.lg-bar { width: 10px; height: 10px; background: var(--orders); border-radius: 2px; }
+.cbox { position: relative; height: 340px; }
+.cbox.sm { height: 260px; }
+.cbox.md { height: 340px; }
+.cbox canvas { touch-action: pan-y; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+
+/* Period selector */
+.navbox { width: 100%; }
+#nav-svg { display: block; width: 100%; touch-action: none; user-select: none; }
+.n-area { fill: var(--ink-3); opacity: .14; }
+.n-line { fill: none; stroke: var(--ink-3); stroke-width: 1.5; }
+.n-dim { fill: var(--nav-dim); }
+.n-win { fill: var(--sel-fill); stroke: var(--accent); stroke-width: 1; cursor: grab; }
+.n-handle { cursor: ew-resize; }
+.n-handle rect { fill: var(--accent); }
+.n-handle path { stroke: var(--surface); stroke-width: 1.5; stroke-linecap: round; fill: none; }
+.n-handle:focus-visible rect { stroke: var(--ink); stroke-width: 2; }
+.n-tick { fill: var(--ink-2); font-size: 11px; }
+
+/* Summary cards */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; display: grid; gap: 4px; align-content: start; min-width: 0; }
+.lab { display: flex; align-items: center; gap: 8px; color: var(--ink-2); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.dot.orders { background: var(--orders); } .dot.revenue { background: var(--rev); } .dot.review { background: var(--review); } .dot.late { background: var(--late); }
+.val { font-size: clamp(22px, 2.4vw, 28px); font-weight: 650; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.delta { font-size: 12.5px; color: var(--ink-2); min-height: 18px; }
+.d { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+.d.good { color: var(--good); } .d.bad { color: var(--bad); } .d.flat { color: var(--ink-2); }
+.d svg { width: 9px; height: 9px; fill: currentColor; }
+.d.dn svg { transform: rotate(180deg); }
+.note { color: var(--ink-2); font-size: 12px; }
+.spark { height: 34px; margin-top: 4px; }
+.sp-line { fill: none; stroke: var(--ink-3); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.sp-dot { stroke: var(--surface); stroke-width: 2; }
+.sp-dot.orders { fill: var(--orders); } .sp-dot.revenue { fill: var(--rev); } .sp-dot.review { fill: var(--review); } .sp-dot.late { fill: var(--late); }
+
+/* Notable months + pinned month */
+.annots { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.annots .al { color: var(--ink-2); font-size: 12.5px; }
+.chip { display: inline-flex; align-items: baseline; gap: 8px; border: 1px solid var(--border); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: 12.5px; color: var(--ink-2); cursor: pointer; text-align: left; }
+.chip:hover { background: var(--hover); }
+.chip b { color: var(--ink); font-weight: 600; }
+.ringkey { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--ink); align-self: center; flex: none; }
+.pinned { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 18px; padding: 10px 14px; border: 1px solid var(--accent); border-radius: 10px; background: var(--accent-wash); font-size: 13px; }
+.pinned span { color: var(--ink-2); }
+.pinned b { color: var(--ink); font-weight: 600; }
+
+/* States ranking */
+.slist { display: grid; gap: 2px; }
+.srow { display: grid; grid-template-columns: minmax(0, 42%) minmax(0, 1fr); align-items: center; gap: 8px; width: 100%; border: 0; background: none; padding: 3px 6px; border-radius: 8px; cursor: pointer; text-align: left; }
+.srow:hover { background: var(--hover); }
+.srow[aria-pressed="true"] { background: var(--accent-wash); }
+.sname { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sname .rank { display: inline-block; width: 22px; color: var(--ink-2); font-size: 12px; font-variant-numeric: tabular-nums; }
+.sname .full { color: var(--ink-2); }
+.strack { position: relative; height: 22px; }
+.sbar { position: absolute; left: 0; top: 4px; height: 14px; width: var(--w); min-width: 2px; background: var(--c); border-radius: 0 4px 4px 0; }
+.sval { position: absolute; left: calc(var(--w) + 8px); top: 50%; transform: translateY(-50%); font-size: 12.5px; color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.sfoot { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin-top: 8px; color: var(--ink-2); font-size: 12px; }
+
+/* Table */
+.twrap { overflow: auto; max-height: 520px; }
+table { width: 100%; min-width: 540px; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { padding: 8px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--border); }
+th:first-child, td:first-child { text-align: left; }
+thead th { position: sticky; top: 0; background: var(--surface); border-bottom: 2px solid var(--axis); z-index: 1; }
+th button { border: 0; background: none; cursor: pointer; padding: 0; display: inline-flex; gap: 4px; align-items: center; font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-2); }
+th button:hover { color: var(--ink); }
+tbody tr:hover, tbody tr.hl { background: var(--hover); }
+tbody tr.pin { background: var(--accent-wash); }
+.rowbtn { border: 0; background: none; padding: 0; cursor: pointer; text-align: left; }
+.rowbtn:hover { text-decoration: underline; text-underline-offset: 2px; }
+.empty { color: var(--ink-3); }
+.tag { display: inline-block; margin-left: 8px; padding: 1px 7px; font-size: 11px; border: 1px solid var(--border); border-radius: 999px; color: var(--ink-2); }
+.tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+#csv-fallback { width: 100%; height: 120px; margin-top: 8px; background: var(--plane); border: 1px solid var(--border); border-radius: 8px; padding: 8px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; }
+
+.tip { position: fixed; z-index: 20; pointer-events: none; min-width: 200px; max-width: 280px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; box-shadow: var(--shadow); font-size: 12.5px; display: grid; gap: 4px; }
+.t-month { font-weight: 650; font-size: 13px; margin-bottom: 2px; }
+.t-row { display: grid; grid-template-columns: auto 1fr; gap: 12px; color: var(--ink-2); }
+.t-row b { color: var(--ink); font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.t-note { color: var(--ink-2); font-size: 12px; }
+
+.notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 32px; color: var(--ink-2); font-size: 12.5px; padding-top: 8px; }
+@media (max-width: 900px) { .notes { grid-template-columns: minmax(0, 1fr); } }
+
+@media (max-width: 900px) {
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid2 { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 460px) {
+  .kpis { grid-template-columns: minmax(0, 1fr); }
+  h1 { font-size: 20px; }
+  .cbox { height: 300px; }
+  .panel { padding: 14px; }
+}
+</style>
+<div class="wrap">
+  <header class="top">
+    <div class="titles">
+      <h1>Olist Monthly Performance, Sep 2016 to Sep 2018</h1>
+      <p class="sub">Orders by purchase month, with canceled and unavailable orders excluded. Revenue is in Brazilian reais (BRL).</p>
+    </div>
+    <div class="seg" role="group" aria-label="Color theme" id="theme-seg">
+      <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
+      <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+      <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="controls" aria-label="Filters">
+      <div class="field"><label for="state-select">State</label><select id="state-select"></select></div>
+      <div class="seg" id="presets" role="group" aria-label="Period presets"></div>
+      <label class="check"><input type="checkbox" id="show-thin"> Show low-volume months</label>
+      <button type="button" class="btn" id="reset" hidden>Reset view</button>
+    </section>
+
+    <section class="panel" aria-label="Period selector">
+      <div class="ph"><h2>Period</h2><span class="psub" id="range-label"></span></div>
+      <div class="navbox" id="navbox">
+        <svg id="nav-svg" height="66" role="group" aria-label="Period selector">
+          <path id="n-area" class="n-area"></path>
+          <path id="n-line" class="n-line"></path>
+          <rect id="n-dim-l" class="n-dim" y="0"></rect>
+          <rect id="n-dim-r" class="n-dim" y="0"></rect>
+          <rect id="n-win" class="n-win" y="2" height="44" rx="4"></rect>
+          <g id="n-ticks"></g>
+          <g id="h-l" class="n-handle" role="slider" tabindex="0" aria-label="Period start" aria-valuemin="0">
+            <rect width="10" height="26" rx="3"></rect><path d="M4 8v10M6.5 8v10"></path>
+          </g>
+          <g id="h-r" class="n-handle" role="slider" tabindex="0" aria-label="Period end" aria-valuemin="0">
+            <rect width="10" height="26" rx="3"></rect><path d="M4 8v10M6.5 8v10"></path>
+          </g>
+        </svg>
+      </div>
+      <p class="hint">Drag an edge to resize the period, drag inside it to slide it, or drag on the empty area to start a new one. Arrow keys move a focused edge.</p>
+    </section>
+
+    <section class="kpis" aria-label="Summary">
+      <div class="card"><div class="lab"><span class="dot orders"></span>Total orders</div><div class="val" id="v-orders"></div><div class="delta" id="d-orders"></div><div class="note" id="n-orders"></div><div class="spark" id="s-orders" aria-hidden="true"></div></div>
+      <div class="card"><div class="lab"><span class="dot revenue"></span>Total revenue (BRL)</div><div class="val" id="v-revenue"></div><div class="delta" id="d-revenue"></div><div class="note" id="n-revenue"></div><div class="spark" id="s-revenue" aria-hidden="true"></div></div>
+      <div class="card"><div class="lab"><span class="dot review"></span>Avg review score</div><div class="val" id="v-review"></div><div class="delta" id="d-review"></div><div class="note" id="n-review"></div><div class="spark" id="s-review" aria-hidden="true"></div></div>
+      <div class="card"><div class="lab"><span class="dot late"></span>Avg late-delivery rate</div><div class="val" id="v-late"></div><div class="delta" id="d-late"></div><div class="note" id="n-late"></div><div class="spark" id="s-late" aria-hidden="true"></div></div>
+    </section>
+
+    <section class="annots" id="annots" hidden></section>
+    <section class="pinned" id="pinned" hidden></section>
+
+    <section class="panel">
+      <div class="ph">
+        <h2>Revenue and orders</h2>
+        <div class="legend"><span><i class="lg-line"></i>Revenue (BRL, left axis)</span><span><i class="lg-bar"></i>Orders (right axis)</span></div>
+      </div>
+      <div class="cbox"><canvas id="c1" role="img" aria-label="Monthly revenue as a line and orders as bars. The monthly table below has the same numbers."></canvas></div>
+    </section>
+
+    <div class="grid2">
+      <section class="panel">
+        <div class="ph"><h2>Average review score</h2><span class="psub" id="c2-sub"></span></div>
+        <div class="cbox sm"><canvas id="c2" role="img" aria-label="Monthly average review score"></canvas></div>
+      </section>
+      <section class="panel">
+        <div class="ph"><h2>Late deliveries</h2><span class="psub" id="c3-sub">Share of delivered orders flagged late</span></div>
+        <div class="cbox sm"><canvas id="c3" role="img" aria-label="Monthly share of delivered orders that arrived late"></canvas></div>
+      </section>
+    </div>
+
+    <div class="grid2">
+      <section class="panel">
+        <div class="ph"><h2>Late deliveries vs review score</h2><span class="psub" id="c4-sub"></span></div>
+        <div class="cbox md"><canvas id="c4" role="img" aria-label="Scatter plot of monthly late-delivery share against average review score"></canvas></div>
+      </section>
+      <section class="panel">
+        <div class="ph"><h2>States</h2><span class="psub" id="states-sub"></span></div>
+        <div class="seg" id="metric-seg" role="group" aria-label="Metric" style="margin-bottom:10px"></div>
+        <div class="slist" id="states-list"></div>
+        <div class="sfoot"><button type="button" class="link" id="states-toggle"></button><span id="states-note"></span></div>
+      </section>
+    </div>
+
+    <section class="panel">
+      <div class="ph">
+        <h2>Monthly numbers</h2>
+        <div class="tools"><span class="psub" id="copy-status" role="status" aria-live="polite">Click a month to pin it across the charts</span><button type="button" class="btn" id="copy-csv">Copy CSV</button></div>
+      </div>
+      <div class="twrap">
+        <table id="data-table">
+          <thead><tr>
+            <th aria-sort="ascending"><button type="button" data-key="idx">Month<span class="arr"></span></button></th>
+            <th aria-sort="none"><button type="button" data-key="orders">Orders<span class="arr"></span></button></th>
+            <th aria-sort="none"><button type="button" data-key="revenue">Revenue (BRL)<span class="arr"></span></button></th>
+            <th aria-sort="none"><button type="button" data-key="review">Avg review score<span class="arr"></span></button></th>
+            <th aria-sort="none"><button type="button" data-key="latePct">Late deliveries<span class="arr"></span></button></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <textarea id="csv-fallback" readonly hidden aria-label="CSV text to copy"></textarea>
+    </section>
+
+    <div class="notes">
+      <p><strong>Definitions.</strong> Orders and revenue count every order except canceled and unavailable ones, and revenue is total payment value. Late % is late orders divided by orders with a delivery date. Review score is the mean over reviewed orders.</p>
+      <p><strong>Summary cards.</strong> Totals cover the selected period. Averages are the plain mean of the monthly values and leave out Sep 2016 and Sep 2018, which have 1 to 2 orders each. The line under each average gives the figure weighted by orders. The delta compares with the period of equal length just before the selected one.</p>
+      <p><strong>Low-volume months.</strong> Months with fewer than 30 orders are left off the rate charts unless the checkbox is on. They always stay in the table. Nov 2016 has no orders in the data.</p>
+      <p>Source: Olist marts (fct_orders). State is the customer's state.</p>
+    </div>
+  </main>
+  <div class="tip" id="tip" hidden></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+(function () {
+'use strict';
+/* <model> */
+const ROWS = [["2016-09","RR",1,136.23,1,1,0,0],["2016-09","SP",1,0.0,1,1,1,1],["2016-10","AL",2,129.9,5,2,1,0],["2016-10","BA",4,995.34,14,4,3,0],["2016-10","CE",7,1949.78,29,6,6,0],["2016-10","DF",6,1200.11,19,6,6,0],["2016-10","ES",4,1067.14,13,4,3,0],["2016-10","GO",8,1154.67,36,8,7,0],["2016-10","MA",4,998.85,14,3,4,1],["2016-10","MG",39,5450.78,132,38,35,0],["2016-10","MT",2,502.63,6,2,1,0],["2016-10","PA",4,1283.09,17,4,4,0],["2016-10","PB",1,74.74,5,1,1,0],["2016-10","PE",7,1688.49,31,7,6,0],["2016-10","PI",1,246.09,4,1,1,0],["2016-10","PR",19,2580.35,74,19,19,0],["2016-10","RJ",42,9940.18,155,40,39,0],["2016-10","RN",4,881.34,20,4,4,0],["2016-10","RR",1,69.02,4,1,1,0],["2016-10","RS",21,3733.56,77,21,17,0],["2016-10","SC",10,2576.91,36,10,9,0],["2016-10","SE",3,345.92,14,3,3,0],["2016-10","SP",104,14788.64,387,104,95,2],["2016-12","PR",1,19.62,5,1,1,0],["2017-01","AC",2,723.15,4,2,2,0],["2017-01","AL",2,454.36,6,2,2,0],["2017-01","BA",25,4511.37,101,25,24,1],["2017-01","CE",9,1266.13,34,9,8,1],["2017-01","DF",13,2104.75,45,13,13,2],["2017-01","ES",11,2492.58,38,11,9,1],["2017-01","GO",18,4658.29,79,18,18,0],["2017-01","MA",7,798.1,29,7,6,1],["2017-01","MG",106,18641.36,451,105,102,0],["2017-01","MS",1,170.36,5,1,1,0],["2017-01","MT",11,2303.68,35,11,9,0],["2017-01","PA",12,2777.77,51,12,10,0],["2017-01","PB",2,463.13,9,2,2,0],["2017-01","PE",9,2151.93,34,8,9,1],["2017-01","PI",7,1453.98,33,7,7,0],["2017-01","PR",64,6302.43,278,64,62,2],["2017-01","RJ",95,14408.5,353,92,90,4],["2017-01","RN",5,1268.13,24,5,5,0],["2017-01","RO",3,825.51,9,3,3,0],["2017-01","RS",53,13615.9,220,52,52,1],["2017-01","SC",31,7301.31,116,31,26,1],["2017-01","SE",4,381.78,19,4,4,0],["2017-01","SP",295,47255.4,1198,291,284,8],["2017-01","TO",2,676.86,9,2,2,0],["2017-02","AC",3,597.4,15,3,3,0],["2017-02","AL",12,2967.87,52,12,12,1],["2017-02","AM",8,1122.54,39,8,8,0],["2017-02","AP",2,707.2,9,2,2,0],["2017-02","BA",59,8635.5,229,59,58,5],["2017-02","CE",13,2483.53,57,13,13,1],["2017-02","DF",23,10729.63,94,22,21,0],["2017-02","ES",32,4639.42,117,30,31,2],["2017-02","GO",25,2898.31,102,25,24,1],["2017-02","MA",11,1195.23,51,11,11,0],["2017-02","MG",250,35110.93,1014,250,241,2],["2017-02","MS",11,7927.16,50,11,11,1],["2017-02","MT",17,3583.36,65,17,17,0],["2017-02","PA",25,10958.21,108,25,24,0],["2017-02","PB",12,2544.3,45,11,11,1],["2017-02","PE",20,3321.26,85,20,20,1],["2017-02","PI",11,3581.85,43,11,10,0],["2017-02","PR",111,20797.74,446,110,110,4],["2017-02","RJ",243,37958.04,980,241,231,9],["2017-02","RN",8,648.61,35,8,8,0],["2017-02","RO",10,2051.96,40,10,9,0],["2017-02","RR",2,108.74,8,2,2,0],["2017-02","RS",104,18324.02,438,104,100,3],["2017-02","SC",58,8154.99,219,56,57,3],["2017-02","SE",11,2366.3,44,11,11,0],["2017-02","SP",630,89268.29,2592,629,601,19],["2017-02","TO",7,939.55,30,7,7,0],["2017-03","AC",2,530.18,9,2,2,0],["2017-03","AL",10,1421.5,41,10,10,2],["2017-03","AM",5,793.39,25,5,5,1],["2017-03","AP",3,412.89,14,3,3,2],["2017-03","BA",89,18630.19,334,87,87,9],["2017-03","CE",26,7158.84,79,26,26,8],["2017-03","DF",55,8047.98,234,55,54,0],["2017-03","ES",48,6006.23,208,48,47,0],["2017-03","GO",50,9971.98,196,50,47,0],["2017-03","MA",22,2722.14,78,22,22,5],["2017-03","MG",350,49519.83,1487,347,343,11],["2017-03","MS",19,6992.9,84,19,19,0],["2017-03","MT",16,2702.55,54,16,16,6],["2017-03","PA",35,9072.74,124,35,35,3],["2017-03","PB",16,4936.41,70,16,16,1],["2017-03","PE",40,8024.62,162,40,35,1],["2017-03","PI",13,2636.76,54,13,13,3],["2017-03","PR",125,18426.58,528,125,121,5],["2017-03","RJ",386,63366.66,1551,382,370,19],["2017-03","RN",13,2104.6,54,13,13,3],["2017-03","RO",16,2523.68,61,16,16,2],["2017-03","RR",2,330.81,8,2,2,1],["2017-03","RS",147,23559.89,614,147,144,4],["2017-03","SC",106,20600.33,418,105,104,22],["2017-03","SE",23,3210.76,84,23,22,3],["2017-03","SP",992,151052.77,4132,983,967,31],["2017-03","TO",8,899.19,31,8,7,0],["2017-04","AC",5,1351.51,16,5,5,0],["2017-04","AL",23,5375.17,67,23,21,10],["2017-04","AM",13,1176.23,59,13,13,0],["2017-04","BA",91,21058.75,339,88,84,15],["2017-04","CE",43,6973.49,171,43,42,6],["2017-04","DF",35,8598.36,130,35,34,0],["2017-04","ES",46,6452.68,179,46,45,2],["2017-04","GO",41,6577.33,153,41,38,3],["2017-04","MA",26,3984.91,110,25,25,1],["2017-04","MG",272,45504.34,1135,271,265,7],["2017-04","MS",15,2208.44,67,15,15,1],["2017-04","MT",27,4521.73,103,27,25,2],["2017-04","PA",36,6108.21,151,36,36,0],["2017-04","PB",20,3562.68,65,19,20,3],["2017-04","PE",38,4706.7,156,38,35,3],["2017-04","PI",13,2870.02,50,12,11,0],["2017-04","PR",114,18456.13,478,114,112,4],["2017-04","RJ",334,65036.54,1351,331,325,26],["2017-04","RN",10,1565.25,47,10,10,1],["2017-04","RO",8,1192.82,32,8,7,1],["2017-04","RR",2,106.89,7,2,2,0],["2017-04","RS",137,20213.14,559,137,132,4],["2017-04","SC",104,13836.82,426,104,100,13],["2017-04","SE",13,3340.07,46,12,13,4],["2017-04","SP",897,147395.7,3641,891,875,73],["2017-04","TO",14,3814.47,59,14,13,2],["2017-05","AC",8,2382.64,33,8,8,0],["2017-05","AL",27,5729.73,100,26,26,2],["2017-05","AM",9,1321.68,32,9,8,1],["2017-05","AP",5,1508.84,19,5,4,1],["2017-05","BA",124,20080.22,475,123,119,6],["2017-05","CE",63,12702.38,279,63,63,1],["2017-05","DF",61,8431.98,259,61,58,1],["2017-05","ES",93,15419.34,389,90,91,3],["2017-05","GO",88,19781.04,363,88,85,3],["2017-05","MA",32,4321.7,135,32,31,0],["2017-05","MG",420,58363.02,1713,418,412,7],["2017-05","MS",27,3958.6,123,27,26,0],["2017-05","MT",37,7680.93,161,37,37,1],["2017-05","PA",35,6570.7,151,35,35,1],["2017-05","PB",18,3498.43,71,18,17,1],["2017-05","PE",66,12792.83,271,66,62,1],["2017-05","PI",25,6956.46,107,25,23,0],["2017-05","PR",211,35278.32,904,209,206,3],["2017-05","RJ",485,85507.73,1961,479,466,16],["2017-05","RN",17,5582.87,71,17,17,0],["2017-05","RO",8,828.88,29,7,8,0],["2017-05","RR",2,317.97,8,2,2,0],["2017-05","RS",206,33051.27,888,206,205,2],["2017-05","SC",148,26735.74,592,144,145,8],["2017-05","SE",11,1059.53,51,11,11,0],["2017-05","SP",1396,200391.46,5808,1383,1363,70],["2017-05","TO",18,2671.87,68,17,17,0],["2017-06","AC",4,510.27,19,4,4,0],["2017-06","AL",10,1276.02,34,10,10,4],["2017-06","AM",1,204.84,2,1,1,0],["2017-06","AP",2,369.74,9,2,2,0],["2017-06","BA",105,23796.34,382,104,103,9],["2017-06","CE",45,11404.85,181,44,44,0],["2017-06","DF",70,9836.95,275,70,69,2],["2017-06","ES",79,12343.29,335,78,79,5],["2017-06","GO",79,11299.08,323,79,73,3],["2017-06","MA",18,2418.76,66,18,16,0],["2017-06","MG",359,54568.86,1526,358,356,6],["2017-06","MS",27,4442.66,114,27,27,0],["2017-06","MT",24,4887.76,100,24,23,1],["2017-06","PA",38,6918.59,159,38,36,3],["2017-06","PB",23,7404.7,93,23,22,2],["2017-06","PE",45,7561.45,183,45,41,3],["2017-06","PI",14,2626.96,63,14,14,0],["2017-06","PR",170,25955.73,728,170,167,2],["2017-06","RJ",407,63029.11,1656,400,398,15],["2017-06","RN",12,1593.06,47,12,12,1],["2017-06","RO",10,2311.06,48,10,10,0],["2017-06","RR",3,175.18,14,3,3,0],["2017-06","RS",219,28843.61,981,219,215,5],["2017-06","SC",116,16210.52,467,115,110,5],["2017-06","SE",9,1806.32,30,9,8,0],["2017-06","SP",1308,193590.64,5412,1296,1284,55],["2017-06","TO",8,4441.12,38,8,8,0],["2017-07","AC",5,794.4,22,5,5,0],["2017-07","AL",17,3029.69,53,16,15,7],["2017-07","AM",5,951.4,19,5,5,0],["2017-07","AP",1,292.39,4,1,1,0],["2017-07","BA",150,23032.11,608,148,144,8],["2017-07","CE",53,9833.21,229,53,53,0],["2017-07","DF",75,12837.69,330,75,75,0],["2017-07","ES",82,8957.26,320,80,81,5],["2017-07","GO",77,10576.97,342,77,77,4],["2017-07","MA",39,7941.34,155,39,37,1],["2017-07","MG",443,64517.48,1827,436,435,6],["2017-07","MS",25,4305.84,107,25,24,0],["2017-07","MT",38,11348.93,162,37,37,0],["2017-07","PA",39,6769.96,151,39,36,3],["2017-07","PB",25,5369.75,102,25,25,7],["2017-07","PE",73,12409.38,266,73,70,13],["2017-07","PI",20,2938.77,77,19,20,1],["2017-07","PR",197,29127.9,875,196,195,2],["2017-07","RJ",558,90075.5,2292,548,547,20],["2017-07","RN",27,4178.25,107,27,27,4],["2017-07","RO",11,1585.92,48,11,11,0],["2017-07","RR",1,225.01,5,1,1,0],["2017-07","RS",245,34924.55,1041,244,242,6],["2017-07","SC",156,22060.55,677,156,152,8],["2017-07","SE",13,1773.19,51,13,13,0],["2017-07","SP",1570,208874.56,6656,1561,1543,38],["2017-07","TO",1,126.58,4,1,1,0],["2017-08","AC",4,765.83,15,4,4,0],["2017-08","AL",18,9675.5,68,18,17,4],["2017-08","AM",5,1483.41,23,5,5,0],["2017-08","AP",3,384.78,13,3,3,0],["2017-08","BA",156,30420.02,639,154,152,5],["2017-08","CE",73,12957.67,332,73,73,2],["2017-08","DF",87,11803.16,372,87,84,1],["2017-08","ES",95,15384.63,397,95,94,4],["2017-08","GO",90,16333.19,366,89,89,2],["2017-08","MA",38,7625.94,144,38,38,2],["2017-08","MG",463,69740.87,1975,459,459,11],["2017-08","MS",24,4468.64,95,23,24,0],["2017-08","MT",38,7831.89,144,36,38,0],["2017-08","PA",58,17155.53,236,58,57,0],["2017-08","PB",16,3053.11,72,16,16,1],["2017-08","PE",85,15758.78,325,85,83,14],["2017-08","PI",22,5707.62,83,22,20,1],["2017-08","PR",220,33334.85,967,219,219,0],["2017-08","RJ",554,90493.98,2310,547,537,18],["2017-08","RN",20,3273.35,91,20,20,2],["2017-08","RO",14,2815.97,61,14,14,0],["2017-08","RS",299,40960.6,1258,298,296,24],["2017-08","SC",157,25649.35,653,157,152,6],["2017-08","SE",20,5657.63,82,20,19,2],["2017-08","SP",1698,226816.95,7308,1686,1665,40],["2017-08","TO",15,2518.52,73,15,15,0],["2017-09","AC",5,2029.23,20,5,5,1],["2017-09","AL",20,5191.65,69,20,19,8],["2017-09","AM",9,1518.44,33,8,9,0],["2017-09","AP",2,499.22,10,2,2,0],["2017-09","BA",170,28325.8,670,168,167,32],["2017-09","CE",78,19924.07,318,78,75,2],["2017-09","DF",95,15429.5,392,95,93,9],["2017-09","ES",93,13314.18,386,92,93,4],["2017-09","GO",87,16358.34,362,87,84,4],["2017-09","MA",42,11340.69,176,42,41,4],["2017-09","MG",500,84041.37,2162,498,494,6],["2017-09","MS",32,5569.48,129,32,32,0],["2017-09","MT",35,8265.92,139,35,34,2],["2017-09","PA",41,7731.74,171,41,41,6],["2017-09","PB",28,6860.38,108,27,25,7],["2017-09","PE",76,17658.39,302,75,74,6],["2017-09","PI",23,3911.94,87,22,22,1],["2017-09","PR",179,26553.86,745,177,176,1],["2017-09","RJ",604,108434.01,2509,597,591,35],["2017-09","RN",24,4180.44,87,24,23,3],["2017-09","RO",16,4938.28,67,16,16,0],["2017-09","RR",1,65.37,4,1,1,0],["2017-09","RS",276,43354.7,1186,276,272,8],["2017-09","SC",153,28974.82,642,153,152,13],["2017-09","SE",16,3541.49,63,16,16,2],["2017-09","SP",1606,244782.19,6800,1591,1577,61],["2017-09","TO",16,4399.72,69,16,16,1],["2017-10","AC",6,958.17,20,6,5,0],["2017-10","AL",28,6341.59,116,28,28,3],["2017-10","AM",3,164.56,15,3,3,0],["2017-10","AP",3,1696.74,13,3,3,0],["2017-10","BA",164,29273.65,628,163,158,17],["2017-10","CE",64,14418.4,245,63,63,3],["2017-10","DF",96,15305.14,379,96,92,5],["2017-10","ES",100,12667.55,427,100,100,6],["2017-10","GO",105,19124.54,456,104,105,6],["2017-10","MA",49,12680.12,182,49,49,13],["2017-10","MG",549,94017.11,2329,546,542,7],["2017-10","MS",33,7301.77,149,33,33,3],["2017-10","MT",50,12892.88,217,50,50,1],["2017-10","PA",53,8768.44,215,53,52,5],["2017-10","PB",29,11597.45,118,28,28,0],["2017-10","PE",80,20473.34,333,78,77,6],["2017-10","PI",23,4955.04,100,23,23,1],["2017-10","PR",202,37924.61,823,200,198,9],["2017-10","RJ",660,112237.6,2715,650,654,54],["2017-10","RN",23,5352.02,95,23,23,1],["2017-10","RO",14,2385.01,59,14,13,0],["2017-10","RR",3,525.15,11,3,3,1],["2017-10","RS",247,43720.87,1025,245,244,10],["2017-10","SC",174,24773.77,731,173,174,9],["2017-10","SE",22,5123.29,73,22,22,6],["2017-10","SP",1754,256868.4,7298,1741,1723,71],["2017-10","TO",13,3238.07,51,13,13,0],["2017-11","AC",5,945.16,18,5,5,1],["2017-11","AL",26,7441.47,105,26,26,6],["2017-11","AM",10,3001.01,47,10,10,0],["2017-11","AP",4,689.17,18,4,4,0],["2017-11","BA",244,35720.76,941,242,242,41],["2017-11","CE",108,22531.79,363,107,103,31],["2017-11","DF",160,30548.51,621,160,156,19],["2017-11","ES",170,28879.93,629,167,168,38],["2017-11","GO",155,24828.3,605,151,152,27],["2017-11","MA",56,12701.96,173,55,54,29],["2017-11","MG",930,155060.21,3826,923,922,90],["2017-11","MS",46,7451.3,188,46,44,5],["2017-11","MT",74,13430.33,293,74,73,10],["2017-11","PA",70,14431.58,241,69,69,10],["2017-11","PB",29,5941.99,97,28,27,5],["2017-11","PE",126,24380.15,471,125,125,17],["2017-11","PI",31,3805.39,102,31,31,18],["2017-11","PR",371,55657.86,1501,368,364,37],["2017-11","RJ",1039,175604.81,3734,1031,1015,285],["2017-11","RN",43,10050.31,151,43,41,8],["2017-11","RO",17,7057.47,67,17,17,0],["2017-11","RR",2,151.46,6,2,2,1],["2017-11","RS",417,68727.5,1584,415,409,64],["2017-11","SC",299,47061.04,1141,296,289,46],["2017-11","SE",26,6613.39,86,26,26,7],["2017-11","SP",2948,406847.46,11996,2924,2897,245],["2017-11","TO",17,3078.92,69,17,17,3],["2017-12","AC",5,1409.58,24,5,5,0],["2017-12","AL",12,2680.76,53,12,12,0],["2017-12","AM",6,1173.62,28,6,6,0],["2017-12","AP",4,770.56,16,4,4,0],["2017-12","BA",192,33590.76,743,189,188,27],["2017-12","CE",81,13588.75,325,81,79,8],["2017-12","DF",131,19932.25,531,129,129,7],["2017-12","ES",111,14720.59,449,109,108,7],["2017-12","GO",127,18604.18,500,126,125,10],["2017-12","MA",41,7542.95,134,41,40,5],["2017-12","MG",681,107716.19,2769,679,669,27],["2017-12","MS",35,6026.16,144,35,33,3],["2017-12","MT",50,11216.21,190,49,49,5],["2017-12","PA",58,12382.4,221,57,58,6],["2017-12","PB",37,7016.25,134,36,37,4],["2017-12","PE",103,19733.04,400,101,101,9],["2017-12","PI",23,3508.48,102,23,23,3],["2017-12","PR",264,35413.18,1065,263,260,14],["2017-12","RJ",776,135675.89,2625,758,746,195],["2017-12","RN",30,4098.5,135,30,30,2],["2017-12","RO",11,2420.06,41,11,11,0],["2017-12","RS",282,49316.15,1104,278,279,32],["2017-12","SC",192,28370.06,790,191,192,12],["2017-12","SE",20,4051.92,86,20,20,3],["2017-12","SP",2334,319063.81,9801,2315,2295,82],["2017-12","TO",14,1892.16,60,14,14,1],["2018-01","AC",6,1157.89,25,6,6,0],["2018-01","AL",37,6485.9,125,37,36,13],["2018-01","AM",12,3433.46,42,12,12,0],["2018-01","AP",11,2788.74,42,11,11,0],["2018-01","BA",232,43922.32,865,227,228,17],["2018-01","CE",89,16606.14,313,85,77,10],["2018-01","DF",138,20756.9,550,137,135,6],["2018-01","ES",145,23528.22,615,144,145,16],["2018-01","GO",144,19865.18,574,143,143,6],["2018-01","MA",56,11118.78,223,55,55,4],["2018-01","MG",855,133805.94,3539,851,846,32],["2018-01","MS",70,12029.88,302,70,70,4],["2018-01","MT",85,14832.89,342,84,84,4],["2018-01","PA",69,16737.8,256,68,69,6],["2018-01","PB",30,7870.82,136,30,30,3],["2018-01","PE",105,18688.32,419,104,103,10],["2018-01","PI",47,8598.06,189,47,47,6],["2018-01","PR",374,52635.54,1554,371,371,11],["2018-01","RJ",878,141673.67,3285,868,850,125],["2018-01","RN",45,7209.52,190,44,42,1],["2018-01","RO",20,3090.1,82,20,20,1],["2018-01","RR",1,162.79,3,1,1,0],["2018-01","RS",373,57283.9,1497,372,367,34],["2018-01","SC",312,46195.01,1216,306,311,36],["2018-01","SE",20,3732.32,84,20,19,1],["2018-01","SP",3016,425093.07,12449,2996,2975,118],["2018-01","TO",17,3336.25,68,17,16,0],["2018-02","AC",3,299.22,14,3,3,0],["2018-02","AL",27,5680.85,84,26,27,10],["2018-02","AM",8,2486.6,26,8,8,1],["2018-02","AP",2,1086.31,8,2,2,0],["2018-02","BA",211,38063.8,764,211,208,45],["2018-02","CE",87,14143.14,257,87,84,36],["2018-02","DF",172,24866.85,654,171,170,25],["2018-02","ES",149,20332.53,585,147,149,24],["2018-02","GO",149,21570.81,550,146,146,32],["2018-02","MA",55,12463.69,183,55,55,20],["2018-02","MG",795,124954.65,3167,788,790,83],["2018-02","MS",64,10129.11,244,64,64,16],["2018-02","MT",67,9847.28,268,67,67,9],["2018-02","PA",58,10994.71,220,57,57,9],["2018-02","PB",35,6342.92,135,35,35,3],["2018-02","PE",125,21072.33,490,121,122,16],["2018-02","PI",33,5892.89,115,33,32,8],["2018-02","PR",337,52544.27,1365,335,335,33],["2018-02","RJ",904,136225.97,2903,893,879,316],["2018-02","RN",23,4144.53,101,23,23,2],["2018-02","RO",13,2109.97,58,13,13,0],["2018-02","RR",5,384.01,11,5,3,1],["2018-02","RS",365,54875.23,1438,363,363,53],["2018-02","SC",255,37801.21,919,253,254,66],["2018-02","SE",15,5103.1,66,15,15,2],["2018-02","SP",2648,353191.78,10676,2632,2631,227],["2018-02","TO",20,3358.47,65,20,20,11],["2018-03","AC",2,164.67,6,2,2,0],["2018-03","AL",30,8184.59,103,30,27,11],["2018-03","AM",9,1607.24,35,8,8,2],["2018-03","AP",5,704.54,18,5,5,0],["2018-03","BA",248,45398.29,823,246,235,83],["2018-03","CE",98,22544.75,288,97,93,50],["2018-03","DF",150,24909.0,555,148,147,30],["2018-03","ES",134,20604.41,430,131,133,59],["2018-03","GO",146,23637.07,541,146,141,28],["2018-03","MA",53,11033.74,166,52,49,27],["2018-03","MG",875,141693.9,3165,866,856,199],["2018-03","MS",58,9033.14,188,58,57,23],["2018-03","MT",55,10492.42,197,54,52,14],["2018-03","PA",73,16405.36,175,71,67,35],["2018-03","PB",39,8067.23,159,39,39,5],["2018-03","PE",108,27020.86,410,107,107,25],["2018-03","PI",34,8158.83,116,33,34,12],["2018-03","PR",375,60039.47,1452,374,369,56],["2018-03","RJ",906,141053.51,2822,886,864,319],["2018-03","RN",39,9095.81,152,39,38,8],["2018-03","RO",13,3305.85,44,13,13,3],["2018-03","RR",6,2643.64,20,6,5,0],["2018-03","RS",416,68068.17,1556,415,407,84],["2018-03","SC",251,43141.09,945,248,247,58],["2018-03","SE",18,3504.4,44,18,17,11],["2018-03","SP",3007,436645.13,12265,2994,2971,347],["2018-03","TO",20,5579.63,69,20,20,7],["2018-04","AC",4,588.17,13,4,4,1],["2018-04","AL",28,7201.21,98,28,27,7],["2018-04","AM",6,893.49,28,6,6,0],["2018-04","AP",5,1042.8,17,4,5,0],["2018-04","BA",225,38804.83,832,219,216,53],["2018-04","CE",100,20973.95,372,100,96,24],["2018-04","DF",147,21551.74,611,145,146,6],["2018-04","ES",142,20181.63,547,139,140,24],["2018-04","GO",134,22558.23,560,132,132,8],["2018-04","MA",46,10023.53,187,46,46,7],["2018-04","MG",786,130597.56,3292,783,778,23],["2018-04","MS",43,7053.14,172,43,43,4],["2018-04","MT",65,13752.37,288,65,64,1],["2018-04","PA",71,14489.05,211,65,66,22],["2018-04","PB",31,5783.44,108,31,28,6],["2018-04","PE",114,22240.47,411,112,110,16],["2018-04","PI",37,12911.77,149,37,34,4],["2018-04","PR",385,76791.51,1645,384,381,6],["2018-04","RJ",834,144663.73,3333,826,807,48],["2018-04","RN",32,7518.84,105,31,32,12],["2018-04","RO",11,4085.72,48,11,11,0],["2018-04","RR",2,772.01,6,2,2,1],["2018-04","RS",349,61424.9,1478,348,345,12],["2018-04","SC",247,51998.94,1074,245,246,6],["2018-04","SE",14,3713.74,38,14,13,6],["2018-04","SP",3042,449316.63,12914,3024,3001,63],["2018-04","TO",19,5370.51,81,19,19,1],["2018-05","AC",2,1501.42,8,2,2,0],["2018-05","AL",19,4393.1,87,19,19,3],["2018-05","AM",9,2192.48,44,9,9,0],["2018-05","AP",6,1189.93,29,6,6,0],["2018-05","BA",240,42578.74,902,237,237,51],["2018-05","CE",73,14529.33,308,72,72,11],["2018-05","DF",144,29198.37,599,143,140,17],["2018-05","ES",134,22420.84,542,132,132,25],["2018-05","GO",138,27869.24,543,138,136,10],["2018-05","MA",32,8589.54,129,32,32,5],["2018-05","MG",757,120566.49,3146,752,751,87],["2018-05","MS",44,11059.73,195,44,44,5],["2018-05","MT",66,14789.9,289,66,66,3],["2018-05","PA",40,9160.55,158,39,40,5],["2018-05","PB",29,5909.59,131,29,29,2],["2018-05","PE",105,16717.89,414,104,101,17],["2018-05","PI",31,8647.63,120,31,30,6],["2018-05","PR",311,54483.62,1310,310,308,33],["2018-05","RJ",829,146373.95,3359,825,816,66],["2018-05","RN",22,4998.86,89,22,22,2],["2018-05","RO",17,3157.51,71,17,17,0],["2018-05","RR",1,171.69,4,1,1,0],["2018-05","RS",351,60118.42,1507,350,350,12],["2018-05","SC",226,41778.76,968,225,226,18],["2018-05","SE",8,1320.59,27,8,8,2],["2018-05","SP",3183,488716.13,13586,3170,3139,172],["2018-05","TO",16,3314.33,62,16,16,4],["2018-06","AC",3,597.26,14,3,3,0],["2018-06","AL",24,4852.93,110,24,24,0],["2018-06","AM",7,1211.14,28,7,7,0],["2018-06","AP",2,247.92,9,2,2,0],["2018-06","BA",200,42288.58,812,200,197,14],["2018-06","CE",74,20097.45,317,74,72,0],["2018-06","DF",150,23708.66,645,149,147,1],["2018-06","ES",124,20717.78,505,124,123,6],["2018-06","GO",105,17381.31,447,105,105,1],["2018-06","MA",42,7964.57,166,42,41,6],["2018-06","MG",712,125042.63,3068,706,712,1],["2018-06","MS",49,10765.75,210,48,49,1],["2018-06","MT",58,13008.55,238,57,58,1],["2018-06","PA",54,11950.55,239,54,54,0],["2018-06","PB",28,14221.13,114,28,28,1],["2018-06","PE",94,18534.13,416,93,91,2],["2018-06","PI",29,5999.96,107,29,29,9],["2018-06","PR",306,50248.06,1300,304,306,0],["2018-06","RJ",715,121975.88,2991,710,707,10],["2018-06","RN",36,8490.83,154,36,35,0],["2018-06","RO",11,2418.97,42,11,11,0],["2018-06","RR",5,1642.41,19,5,5,0],["2018-06","RS",304,53147.64,1334,303,304,4],["2018-06","SC",205,39055.27,877,205,205,0],["2018-06","SE",30,5360.56,120,29,27,0],["2018-06","SP",2760,394577.34,11882,2753,2736,26],["2018-06","TO",18,4987.03,73,18,18,0],["2018-07","AC",4,1769.95,18,4,4,0],["2018-07","AL",23,4825.2,88,23,22,4],["2018-07","AM",18,2598.41,72,18,18,1],["2018-07","AP",6,1613.63,23,6,6,0],["2018-07","BA",249,50741.45,1035,246,245,17],["2018-07","CE",86,16845.13,368,86,84,2],["2018-07","DF",166,27296.87,712,166,165,7],["2018-07","ES",123,33688.27,517,121,122,12],["2018-07","GO",114,24565.38,471,114,112,6],["2018-07","MA",40,8361.39,151,40,39,7],["2018-07","MG",648,110170.08,2764,644,643,11],["2018-07","MS",49,8295.34,214,49,49,2],["2018-07","MT",47,12645.68,209,47,47,0],["2018-07","PA",57,15851.64,244,57,57,3],["2018-07","PB",52,20455.11,213,52,51,2],["2018-07","PE",138,30372.65,592,138,137,8],["2018-07","PI",32,8471.11,125,31,32,3],["2018-07","PR",316,54129.9,1380,314,314,8],["2018-07","RJ",713,119584.14,2998,704,696,25],["2018-07","RN",29,9679.73,119,27,29,0],["2018-07","RO",16,5249.38,70,16,16,0],["2018-07","RR",5,1960.59,25,5,5,0],["2018-07","RS",311,48622.57,1336,311,308,6],["2018-07","SC",198,37199.87,864,198,195,4],["2018-07","SE",27,5655.15,112,27,26,2],["2018-07","SP",2744,375436.45,11725,2722,2712,144],["2018-07","TO",22,3795.09,100,22,22,2],["2018-08","AC",3,604.52,15,3,3,0],["2018-08","AL",16,2913.71,70,16,16,0],["2018-08","AM",4,512.5,15,4,4,0],["2018-08","AP",2,257.4,10,2,2,0],["2018-08","BA",164,26896.02,696,164,159,2],["2018-08","CE",55,11881.57,241,55,55,0],["2018-08","DF",144,23497.26,608,144,143,7],["2018-08","ES",104,19431.45,446,104,103,1],["2018-08","GO",117,21204.65,507,117,117,5],["2018-08","MA",30,5325.36,125,30,29,3],["2018-08","MG",703,114031.81,3060,701,700,22],["2018-08","MS",35,6551.94,137,35,35,13],["2018-08","MT",40,5783.76,179,40,39,1],["2018-08","PA",43,10965.9,193,43,43,0],["2018-08","PB",29,9237.03,124,29,28,2],["2018-08","PE",85,15478.29,360,85,83,4],["2018-08","PI",21,3979.84,82,21,20,0],["2018-08","PR",329,46900.5,1438,328,327,16],["2018-08","RJ",737,112570.83,3087,733,723,60],["2018-08","RN",20,5993.75,92,20,20,1],["2018-08","RO",8,3236.63,39,8,8,0],["2018-08","RS",295,52001.27,1292,292,293,14],["2018-08","SC",203,38389.2,878,202,201,12],["2018-08","SE",23,5600.79,100,23,23,0],["2018-08","SP",3198,450984.66,13576,3185,3164,494],["2018-08","TO",13,2665.51,60,13,13,3],["2018-09","SP",1,166.46,1,1,0,0]];
+const LOW_KEYS = new Set(['2016-09', '2018-09']);
+const THIN_ORDERS = 30;
+const MIN_RANK_N = 100;
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const STATE_NAMES = {
+  AC: 'Acre', AL: 'Alagoas', AM: 'Amazonas', AP: 'Amapá', BA: 'Bahia', CE: 'Ceará', DF: 'Distrito Federal',
+  ES: 'Espírito Santo', GO: 'Goiás', MA: 'Maranhão', MG: 'Minas Gerais', MS: 'Mato Grosso do Sul',
+  MT: 'Mato Grosso', PA: 'Pará', PB: 'Paraíba', PE: 'Pernambuco', PI: 'Piauí', PR: 'Paraná',
+  RJ: 'Rio de Janeiro', RN: 'Rio Grande do Norte', RO: 'Rondônia', RR: 'Roraima', RS: 'Rio Grande do Sul',
+  SC: 'Santa Catarina', SE: 'Sergipe', SP: 'São Paulo', TO: 'Tocantins'
+};
+const STATES = Object.keys(STATE_NAMES);
+
+const MONTHS = (() => {
+  const out = [];
+  let year = 2016, month = 9;
+  while (year < 2018 || (year === 2018 && month <= 9)) {
+    out.push(year + '-' + String(month).padStart(2, '0'));
+    month += 1;
+    if (month > 12) { month = 1; year += 1; }
+  }
+  return out;
+})();
+const N = MONTHS.length;
+const IDX = Object.fromEntries(MONTHS.map((key, i) => [key, i]));
+const monthLabel = (i) => { const [y, m] = MONTHS[i].split('-'); return MONTH_NAMES[Number(m) - 1] + ' ' + y; };
+const monthShort = (i) => { const [y, m] = MONTHS[i].split('-'); return MONTH_NAMES[Number(m) - 1] + " '" + y.slice(2); };
+
+const blank = () => ({ orders: 0, revenue: 0, rSum: 0, rN: 0, deliv: 0, late: 0 });
+const byState = { ALL: Array.from({ length: N }, blank) };
+for (const [month_key, st, orders, revenue, r_sum, r_n, delivered, late] of ROWS) {
+  const i = IDX[month_key];
+  const own = byState[st] || (byState[st] = Array.from({ length: N }, blank));
+  for (const cell of [own[i], byState.ALL[i]]) {
+    cell.orders += orders; cell.revenue += revenue; cell.rSum += r_sum;
+    cell.rN += r_n; cell.deliv += delivered; cell.late += late;
+  }
+}
+
+const derived_cache = {};
+function derive(st) {
+  if (!derived_cache[st]) {
+    derived_cache[st] = byState[st].map((c, i) => ({
+      idx: i, key: MONTHS[i], orders: c.orders, revenue: Math.round(c.revenue * 100) / 100,
+      rSum: c.rSum, rN: c.rN, deliv: c.deliv, late: c.late,
+      review: c.rN ? c.rSum / c.rN : null,
+      latePct: c.deliv ? 100 * c.late / c.deliv : null,
+      thin: c.orders < THIN_ORDERS, low: LOW_KEYS.has(MONTHS[i])
+    }));
+  }
+  return derived_cache[st];
+}
+
+const mean = (values) => (values.length ? values.reduce((s, x) => s + x, 0) / values.length : null);
+
+function summarize(recs) {
+  const core = recs.filter((r) => !r.low);
+  const reviews = core.filter((r) => r.review !== null).map((r) => r.review);
+  const lates = core.filter((r) => r.latePct !== null).map((r) => r.latePct);
+  let orders = 0, revenue = 0, r_sum = 0, r_n = 0, delivered = 0, late = 0;
+  for (const r of recs) {
+    orders += r.orders; revenue += r.revenue; r_sum += r.rSum; r_n += r.rN; delivered += r.deliv; late += r.late;
+  }
+  return {
+    orders, revenue,
+    reviewMean: mean(reviews), reviewCount: reviews.length,
+    lateMean: mean(lates), lateCount: lates.length,
+    reviewAll: r_n ? r_sum / r_n : null,
+    lateAll: delivered ? 100 * late / delivered : null
+  };
+}
+
+/* Notable months, derived from the all-states series so the text always matches the data. */
+function annotationsFor(recs) {
+  const flags = new Map();
+  const flag = (i, key, value) => { if (!flags.has(i)) flags.set(i, {}); flags.get(i)[key] = value; };
+  let jump = null;
+  for (let i = 1; i < recs.length; i += 1) {
+    const prev = recs[i - 1], cur = recs[i];
+    if (prev.orders >= 1000 && !cur.thin) {
+      const growth = cur.orders / prev.orders - 1;
+      if (!jump || growth > jump.growth) jump = { i, growth };
+    }
+  }
+  if (jump) flag(jump.i, 'jump', jump.growth);
+  const solid = recs.filter((r) => !r.thin);
+  const top_late = solid.filter((r) => r.latePct !== null).sort((a, b) => b.latePct - a.latePct).slice(0, 2);
+  top_late.forEach((r, rank) => flag(r.idx, 'late', rank));
+  const lowest = solid.filter((r) => r.review !== null).sort((a, b) => a.review - b.review)[0];
+  if (lowest) flag(lowest.idx, 'lowest', true);
+  return [...flags.entries()].sort((a, b) => a[0] - b[0]).map(([i, f]) => {
+    const r = recs[i];
+    const parts = [];
+    if (f.jump !== undefined) parts.push('orders +' + Math.round(f.jump * 100) + '% vs ' + MONTH_NAMES[Number(MONTHS[i - 1].split('-')[1]) - 1]);
+    if (r.latePct !== null) parts.push('late ' + r.latePct.toFixed(1) + '%' + (f.late === 0 ? ' (highest)' : ''));
+    if (r.review !== null) parts.push('review ' + r.review.toFixed(2) + (f.lowest ? ' (lowest)' : ''));
+    return { idx: i, label: monthLabel(i), text: parts.join(' · ') };
+  });
+}
+
+/* Axis helpers */
+const STEPS = [1, 2, 2.5, 5, 10];
+function stepUp(raw) {
+  if (!(raw > 0)) return 1;
+  const p = Math.pow(10, Math.floor(Math.log10(raw)));
+  for (const s of STEPS) if (s * p >= raw * 0.999999) return s * p;
+  return 10 * p;
+}
+function niceAxis(max_value, min_n = 3, max_n = 6) {
+  if (!(max_value > 0)) return { step: 1, max: min_n, n: min_n };
+  for (let e = -3; e <= 10; e += 1) {
+    for (const s of STEPS) {
+      const step = s * Math.pow(10, e);
+      const n = Math.ceil(max_value / step - 1e-9);
+      if (n <= max_n) { const n2 = Math.max(n, min_n); return { step, max: step * n2, n: n2 }; }
+    }
+  }
+  return { step: max_value, max: max_value, n: 1 };
+}
+function reviewDomain(values) {
+  if (!values.length) return { min: 1, max: 5, step: 1 };
+  let min = Math.max(1, Math.floor(Math.min(...values) * 2) / 2 - 0.5);
+  if (5 - min > 3) return { min: Math.floor(min), max: 5, step: 1 };
+  return { min, max: 5, step: 0.5 };
+}
+function pearson(points) {
+  if (points.length < 5) return null;
+  const mx = mean(points.map((p) => p.x)), my = mean(points.map((p) => p.y));
+  let sxy = 0, sxx = 0, syy = 0;
+  for (const p of points) { sxy += (p.x - mx) * (p.y - my); sxx += (p.x - mx) ** 2; syy += (p.y - my) ** 2; }
+  if (!sxx || !syy) return null;
+  const slope = sxy / sxx;
+  return { r: sxy / Math.sqrt(sxx * syy), slope, intercept: my - slope * mx };
+}
+
+/* Formatting */
+const nf = new Intl.NumberFormat('en-US');
+const fmtInt = (v) => nf.format(Math.round(v));
+const fmtBRL = (v, cents) => 'R$ ' + v.toLocaleString('en-US', cents ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : { maximumFractionDigits: 0 });
+const trim1 = (x) => String(Math.round(x * 10) / 10);
+const fmtCompact = (v) => { const a = Math.abs(v); if (a >= 1e6) return trim1(v / 1e6) + 'M'; if (a >= 1e3) return trim1(v / 1e3) + 'K'; return String(Math.round(v * 100) / 100); };
+const fmtPct = (v) => v.toFixed(1) + '%';
+const fmtScore = (v) => v.toFixed(2);
+/* </model> */
+
+/* ===== UI: state, controls, period selector, cards, states, table ===== */
+const FONT = 'system-ui,-apple-system,"Segoe UI",sans-serif';
+const $ = (id) => document.getElementById(id);
+const S = { st: 'ALL', from: 0, to: N - 1, hover: null, pinned: null, metric: 'orders', showAll: false, showThin: false, theme: 'auto', sort: { key: 'idx', dir: 1 } };
+let V = null;
+const ANN = annotationsFor(derive('ALL'));
+const T = {};
+const charts = {};
+const PRESETS = [
+  { label: 'All', from: 0, to: N - 1 },
+  { label: '2017', from: IDX['2017-01'], to: IDX['2017-12'] },
+  { label: '2018', from: IDX['2018-01'], to: IDX['2018-09'] },
+  { label: 'Last 6 mo', from: N - 6, to: N - 1 },
+  { label: "Nov '17 – Mar '18", from: IDX['2017-11'], to: IDX['2018-03'] }
+];
+const METRICS = {
+  orders: { label: 'Orders', color: '--orders', fmt: fmtInt, get: (t) => t.orders },
+  revenue: { label: 'Revenue', color: '--rev', fmt: (v) => 'R$ ' + fmtCompact(v), get: (t) => t.revenue },
+  review: { label: 'Avg review', color: '--review', fmt: fmtScore, get: (t) => (t.rN >= MIN_RANK_N ? t.rSum / t.rN : null), axis: [1, 5] },
+  late: { label: 'Late %', color: '--late', fmt: fmtPct, get: (t) => (t.deliv >= MIN_RANK_N ? 100 * t.late / t.deliv : null) }
+};
+const STORE_KEY = 'olist-monthly-dashboard-v2';
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+const visibleRate = (r) => S.showThin || !r.thin;
+
+function loadPrefs() {
+  try {
+    const o = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+    if (!o) return;
+    if (byState[o.st]) S.st = o.st;
+    if (Number.isInteger(o.from) && Number.isInteger(o.to) && o.from >= 0 && o.to < N && o.to - o.from >= 1) { S.from = o.from; S.to = o.to; }
+    if (METRICS[o.metric]) S.metric = o.metric;
+    S.showThin = !!o.showThin;
+    if (['auto', 'light', 'dark'].includes(o.theme)) S.theme = o.theme;
+  } catch (e) { /* storage unavailable */ }
+}
+function savePrefs() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify({ st: S.st, from: S.from, to: S.to, metric: S.metric, showThin: S.showThin, theme: S.theme })); } catch (e) { /* storage unavailable */ }
+}
+
+function readTheme() {
+  const cs = getComputedStyle(document.documentElement);
+  ['--ink', '--ink-2', '--ink-3', '--grid', '--axis', '--surface', '--rev', '--orders', '--review', '--late'].forEach((k) => { T[k] = cs.getPropertyValue(k).trim(); });
+}
+function applyTheme() {
+  const root = document.documentElement;
+  if (S.theme === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', S.theme);
+  document.querySelectorAll('#theme-seg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.themeChoice === S.theme)));
+}
+
+function computeView() {
+  const all = derive(S.st);
+  V = { all, rows: all.slice(S.from, S.to + 1), n: S.to - S.from + 1 };
+  if (S.pinned !== null && (S.pinned < S.from || S.pinned > S.to)) S.pinned = null;
+  const pts = V.rows.filter((r) => r.latePct !== null && r.review !== null && visibleRate(r));
+  const max_orders = Math.max(1, ...V.rows.map((r) => r.orders));
+  V.scatter = pts.map((r) => ({ idx: r.idx, x: r.latePct, y: r.review, orders: r.orders, rad: 4 + 7 * Math.sqrt(r.orders / max_orders) }));
+}
+
+/* ---- Controls ---- */
+function buildControls() {
+  const sel = $('state-select');
+  sel.innerHTML = '<option value="ALL">All states</option>' + STATES.map((st) => '<option value="' + st + '">' + st + ' · ' + STATE_NAMES[st] + '</option>').join('');
+  $('presets').innerHTML = PRESETS.map((p, i) => '<button type="button" data-preset="' + i + '" aria-pressed="false">' + p.label + '</button>').join('');
+  $('metric-seg').innerHTML = Object.keys(METRICS).map((k) => '<button type="button" data-metric="' + k + '" aria-pressed="false">' + METRICS[k].label + '</button>').join('');
+}
+function isDefaultView() { return S.st === 'ALL' && S.from === 0 && S.to === N - 1 && S.pinned === null && !S.showThin; }
+function renderControls() {
+  $('state-select').value = S.st;
+  $('show-thin').checked = S.showThin;
+  document.querySelectorAll('#presets button').forEach((b) => {
+    const p = PRESETS[Number(b.dataset.preset)];
+    b.setAttribute('aria-pressed', String(p.from === S.from && p.to === S.to));
+  });
+  document.querySelectorAll('#metric-seg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.metric === S.metric)));
+  $('range-label').textContent = monthLabel(S.from) + ' to ' + monthLabel(S.to) + ' · ' + V.n + ' months · ' + (S.st === 'ALL' ? 'all states' : STATE_NAMES[S.st]);
+  $('reset').hidden = isDefaultView();
+}
+
+/* ---- Period selector (SVG) ---- */
+const nav = { w: 0, h: 66, pad: 10, base: 46, top: 8, drag: null };
+const navX = (i) => nav.pad + i * (nav.w - 2 * nav.pad) / (N - 1);
+const navIdx = (x) => clamp(Math.round((x - nav.pad) / ((nav.w - 2 * nav.pad) / (N - 1))), 0, N - 1);
+function renderNav() {
+  const svg = $('nav-svg');
+  nav.w = Math.max(240, $('navbox').clientWidth);
+  svg.setAttribute('width', nav.w);
+  svg.setAttribute('viewBox', '0 0 ' + nav.w + ' ' + nav.h);
+  const series = V.all.map((r) => r.orders);
+  const max_v = Math.max(1, ...series);
+  const y = (v) => nav.base - (nav.base - nav.top) * v / max_v;
+  const line = series.map((v, i) => (i ? 'L' : 'M') + navX(i).toFixed(1) + ' ' + y(v).toFixed(1)).join(' ');
+  $('n-line').setAttribute('d', line);
+  $('n-area').setAttribute('d', line + ' L' + navX(N - 1).toFixed(1) + ' ' + nav.base + ' L' + navX(0).toFixed(1) + ' ' + nav.base + ' Z');
+  const xl = navX(S.from), xr = navX(S.to);
+  const set = (id, attrs) => { const e = $(id); for (const k in attrs) e.setAttribute(k, attrs[k]); };
+  set('n-dim-l', { x: 0, width: Math.max(0, xl), height: nav.base });
+  set('n-dim-r', { x: xr, width: Math.max(0, nav.w - xr), height: nav.base });
+  set('n-win', { x: xl, width: Math.max(1, xr - xl) });
+  set('h-l', { transform: 'translate(' + (xl - 5) + ',' + 9 + ')', 'aria-valuemax': N - 1, 'aria-valuenow': S.from, 'aria-valuetext': monthLabel(S.from) });
+  set('h-r', { transform: 'translate(' + (xr - 5) + ',' + 9 + ')', 'aria-valuemax': N - 1, 'aria-valuenow': S.to, 'aria-valuetext': monthLabel(S.to) });
+  const ticks = [[IDX['2017-01'], 'Jan 2017', 'middle'], [IDX['2018-01'], 'Jan 2018', 'middle']];
+  if (nav.w >= 520) { ticks.unshift([0, 'Sep 2016', 'start']); ticks.push([N - 1, 'Sep 2018', 'end']); }
+  $('n-ticks').innerHTML = ticks.map(([i, t, anchor]) => '<text class="n-tick" x="' + (anchor === 'start' ? nav.pad : anchor === 'end' ? nav.w - nav.pad : navX(i)) + '" y="' + (nav.base + 16) + '" text-anchor="' + anchor + '">' + t + '</text>').join('');
+}
+function wireNav() {
+  const svg = $('nav-svg');
+  const xOf = (e) => e.clientX - svg.getBoundingClientRect().left;
+  svg.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('.n-handle') === null && e.button > 0) return;
+    const x = xOf(e), xl = navX(S.from), xr = navX(S.to);
+    let mode = 'new';
+    if (Math.abs(x - xl) <= 12 && Math.abs(x - xl) <= Math.abs(x - xr)) mode = 'l';
+    else if (Math.abs(x - xr) <= 12) mode = 'r';
+    else if (x > xl && x < xr) mode = 'move';
+    nav.drag = { mode, i0: navIdx(x), from0: S.from, to0: S.to };
+    svg.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+  svg.addEventListener('pointermove', (e) => {
+    const d = nav.drag; if (!d) return;
+    const i = navIdx(xOf(e));
+    if (d.mode === 'l') S.from = clamp(i, 0, S.to - 1);
+    else if (d.mode === 'r') S.to = clamp(i, S.from + 1, N - 1);
+    else if (d.mode === 'move') { const len = d.to0 - d.from0; const f = clamp(d.from0 + i - d.i0, 0, N - 1 - len); S.from = f; S.to = f + len; }
+    else { let f = Math.min(d.i0, i), t = Math.max(d.i0, i); if (t - f < 1) { if (f < N - 1) t = f + 1; else f = t - 1; } S.from = f; S.to = t; }
+    schedule();
+  });
+  const end = () => { if (nav.drag) { nav.drag = null; savePrefs(); } };
+  svg.addEventListener('pointerup', end);
+  svg.addEventListener('pointercancel', end);
+  const keys = (side) => (e) => {
+    const step = e.key === 'ArrowLeft' ? -1 : e.key === 'ArrowRight' ? 1 : 0;
+    if (!step) return;
+    const amount = e.shiftKey ? 3 : 1;
+    if (side === 'l') S.from = clamp(S.from + step * amount, 0, S.to - 1); else S.to = clamp(S.to + step * amount, S.from + 1, N - 1);
+    e.preventDefault(); schedule(); savePrefs();
+  };
+  $('h-l').addEventListener('keydown', keys('l'));
+  $('h-r').addEventListener('keydown', keys('r'));
+}
+
+/* ---- Summary cards ---- */
+function sparkSVG(values, cls, w) {
+  const h = 34, pad = 4;
+  const pts = [];
+  values.forEach((v, i) => { if (v !== null) pts.push([i, v]); });
+  if (pts.length < 2 || w < 40) return '';
+  const lo = Math.min(...pts.map((p) => p[1])), hi = Math.max(...pts.map((p) => p[1]));
+  const X = (i) => pad + i * (w - 2 * pad) / (values.length - 1);
+  const Y = (v) => (hi === lo ? h / 2 : h - pad - (v - lo) / (hi - lo) * (h - 2 * pad));
+  let d = '', open = false;
+  values.forEach((v, i) => { if (v === null) { open = false; return; } d += (open ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1); open = true; });
+  const last = pts[pts.length - 1];
+  return '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '"><path class="sp-line" d="' + d + '"></path><circle class="sp-dot ' + cls + '" cx="' + X(last[0]).toFixed(1) + '" cy="' + Y(last[1]).toFixed(1) + '" r="4.5"></circle></svg>';
+}
+function deltaHTML(change, unit, up_is_good, vs) {
+  if (change === null || !isFinite(change)) return '<span class="d flat">No earlier period to compare</span>';
+  const tiny = unit === 'pct' ? 0.05 : unit === 'pp' ? 0.05 : 0.005;
+  if (Math.abs(change) < tiny) return '<span class="d flat">No change</span> <span>' + vs + '</span>';
+  const up = change > 0;
+  const good = up === up_is_good;
+  const mag = unit === 'pct' ? Math.abs(change).toFixed(1) + '%' : unit === 'pp' ? Math.abs(change).toFixed(1) + ' pp' : Math.abs(change).toFixed(2);
+  const arrow = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1 L9 8 H1 Z"></path></svg>';
+  return '<span class="d ' + (good ? 'good' : 'bad') + (up ? '' : ' dn') + '">' + arrow + (up ? '+' : '−') + mag + '</span> <span>' + vs + '</span>';
+}
+function renderCards() {
+  const cur = summarize(V.rows);
+  const from_prev = S.from - V.n;
+  const prev = from_prev >= 0 ? summarize(V.all.slice(from_prev, S.from)) : null;
+  const vs = 'vs prior ' + V.n + ' mo';
+  const pct = (a, b) => (prev && b > 0 ? 100 * (a / b - 1) : null);
+  const diff = (a, b) => (prev && a !== null && b !== null ? a - b : null);
+  const where = S.st === 'ALL' ? 'all states' : STATE_NAMES[S.st];
+  $('v-orders').textContent = fmtInt(cur.orders);
+  $('d-orders').innerHTML = deltaHTML(pct(cur.orders, prev && prev.orders), 'pct', true, vs);
+  $('n-orders').textContent = V.n + ' months · ' + where;
+  $('v-revenue').textContent = fmtBRL(cur.revenue, false);
+  $('d-revenue').innerHTML = deltaHTML(pct(cur.revenue, prev && prev.revenue), 'pct', true, vs);
+  $('n-revenue').textContent = 'Total payment value · ' + where;
+  $('v-review').textContent = cur.reviewMean === null ? '–' : fmtScore(cur.reviewMean);
+  $('d-review').innerHTML = deltaHTML(diff(cur.reviewMean, prev && prev.reviewMean), 'score', true, vs);
+  $('n-review').textContent = cur.reviewMean === null ? 'No reviews in this period' : 'Mean of ' + cur.reviewCount + ' monthly values · weighted ' + fmtScore(cur.reviewAll);
+  $('v-late').textContent = cur.lateMean === null ? '–' : fmtPct(cur.lateMean);
+  $('d-late').innerHTML = deltaHTML(diff(cur.lateMean, prev && prev.lateMean), 'pp', false, vs);
+  $('n-late').textContent = cur.lateMean === null ? 'No deliveries in this period' : 'Mean of ' + cur.lateCount + ' monthly values · weighted ' + fmtPct(cur.lateAll);
+  const core = (f) => V.rows.map((r) => (r.low || !visibleRate(r) ? null : f(r)));
+  const series = { orders: V.rows.map((r) => r.orders), revenue: V.rows.map((r) => r.revenue), review: core((r) => r.review), late: core((r) => r.latePct) };
+  for (const k of ['orders', 'revenue', 'review', 'late']) { const box = $('s-' + k); box.innerHTML = sparkSVG(series[k], k, box.clientWidth); }
+}
+
+/* ---- Notable months and pinned month ---- */
+function renderAnnots() {
+  const box = $('annots');
+  const list = S.st === 'ALL' ? ANN.filter((a) => a.idx >= S.from && a.idx <= S.to) : [];
+  box.hidden = list.length === 0;
+  if (!list.length) { box.innerHTML = ''; return; }
+  box.innerHTML = '<span class="al">Notable months</span>' + list.map((a) => '<button type="button" class="chip" data-idx="' + a.idx + '"><i class="ringkey"></i><span><b>' + a.label + '</b> · ' + a.text + '</span></button>').join('');
+}
+function renderPinned() {
+  const box = $('pinned');
+  if (S.pinned === null) { box.hidden = true; box.innerHTML = ''; return; }
+  const r = V.all[S.pinned];
+  box.hidden = false;
+  box.innerHTML = '<strong>' + monthLabel(r.idx) + '</strong>'
+    + '<span>Orders <b>' + fmtInt(r.orders) + '</b></span>'
+    + '<span>Revenue <b>' + fmtBRL(r.revenue, true) + '</b></span>'
+    + '<span>Avg review <b>' + (r.review === null ? '–' : fmtScore(r.review)) + '</b></span>'
+    + '<span>Late <b>' + (r.latePct === null ? '–' : fmtPct(r.latePct)) + '</b></span>'
+    + '<button type="button" class="link" id="unpin">Clear</button>';
+}
+
+/* ---- States ranking ---- */
+function renderStates() {
+  const M = METRICS[S.metric];
+  const rolled = STATES.map((st) => {
+    const t = blank();
+    for (let i = S.from; i <= S.to; i += 1) { const c = byState[st][i]; t.orders += c.orders; t.revenue += c.revenue; t.rSum += c.rSum; t.rN += c.rN; t.deliv += c.deliv; t.late += c.late; }
+    return { st, v: M.get(t) };
+  });
+  const ranked = rolled.filter((x) => x.v !== null).sort((a, b) => b.v - a.v);
+  const hidden = rolled.length - ranked.length;
+  const limit = S.showAll ? ranked.length : Math.min(10, ranked.length);
+  const shown = ranked.slice(0, limit).map((x, i) => ({ st: x.st, v: x.v, rank: i + 1 }));
+  if (S.st !== 'ALL' && !shown.some((x) => x.st === S.st)) {
+    const k = ranked.findIndex((x) => x.st === S.st);
+    if (k >= 0) shown.push({ st: S.st, v: ranked[k].v, rank: k + 1 });
+  }
+  const hi = Math.max(0, ...ranked.map((x) => x.v));
+  const frac = (v) => (M.axis ? Math.max(0, (v - M.axis[0]) / (M.axis[1] - M.axis[0])) : (hi ? v / hi : 0));
+  $('states-sub').textContent = M.label + ' by state' + (M.axis ? ' · axis starts at 1' : '') + ' · highest first';
+  $('states-list').innerHTML = shown.length ? shown.map((x) => '<button type="button" class="srow" data-st="' + x.st + '" aria-pressed="' + (S.st === x.st) + '" title="' + STATE_NAMES[x.st] + '"><span class="sname"><span class="rank">' + x.rank + '</span>' + x.st + ' <span class="full">' + STATE_NAMES[x.st] + '</span></span><span class="strack" style="--w:' + (frac(x.v) * 70).toFixed(1) + '%;--c:var(' + M.color + ')"><span class="sbar"></span><span class="sval">' + M.fmt(x.v) + '</span></span></button>').join('') : '<p class="psub">No states have enough data in this period.</p>';
+  const tog = $('states-toggle');
+  tog.hidden = ranked.length <= 10;
+  tog.textContent = S.showAll ? 'Show top 10' : 'Show all ' + ranked.length + ' states';
+  $('states-note').textContent = hidden && (S.metric === 'review' || S.metric === 'late') ? hidden + ' states hidden: fewer than ' + MIN_RANK_N + ' ' + (S.metric === 'review' ? 'reviewed' : 'delivered') + ' orders in this period.' : 'Click a state to filter the whole dashboard.';
+}
+
+/* ---- Table ---- */
+function renderTable() {
+  const { key, dir } = S.sort;
+  const rows = [...V.rows].sort((a, b) => {
+    const x = a[key], y = b[key];
+    if (x === null && y === null) return 0;
+    if (x === null) return 1;
+    if (y === null) return -1;
+    return (x - y) * dir;
+  });
+  const cell = (v, f) => (v === null ? '<td class="empty">–</td>' : '<td>' + f(v) + '</td>');
+  $('data-table').tBodies[0].innerHTML = rows.map((r) => '<tr data-idx="' + r.idx + '"><td><button type="button" class="rowbtn" data-idx="' + r.idx + '">' + monthLabel(r.idx) + '</button>' + (r.thin ? '<span class="tag" title="Fewer than ' + THIN_ORDERS + ' orders">low volume</span>' : '') + '</td>'
+    + '<td>' + fmtInt(r.orders) + '</td><td>' + fmtBRL(r.revenue, true) + '</td>' + cell(r.review, fmtScore) + cell(r.latePct, fmtPct) + '</tr>').join('');
+  document.querySelectorAll('#data-table thead th').forEach((th) => {
+    const b = th.querySelector('button'), on = b.dataset.key === key;
+    th.setAttribute('aria-sort', on ? (dir > 0 ? 'ascending' : 'descending') : 'none');
+    b.querySelector('.arr').textContent = on ? (dir > 0 ? '▲' : '▼') : '';
+  });
+  markRows();
+}
+function markRows() {
+  document.querySelectorAll('#data-table tbody tr').forEach((tr) => {
+    const i = Number(tr.dataset.idx);
+    tr.classList.toggle('hl', i === S.hover);
+    tr.classList.toggle('pin', i === S.pinned);
+  });
+}
+function csvText() {
+  const head = 'month,state,orders,revenue_brl,avg_review_score,late_pct';
+  return head + '\n' + V.rows.map((r) => [r.key, S.st, r.orders, r.revenue.toFixed(2), r.review === null ? '' : r.review.toFixed(2), r.latePct === null ? '' : r.latePct.toFixed(1)].join(',')).join('\n');
+}
+function copyCsv() {
+  const text = csvText(), status = $('copy-status'), ta = $('csv-fallback');
+  const fallback = () => { ta.hidden = false; ta.value = text; ta.focus(); ta.select(); status.textContent = 'Copying was blocked here. The CSV is selected below, press Ctrl+C or Cmd+C.'; };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => { ta.hidden = true; status.textContent = 'Copied ' + V.n + ' rows as CSV'; }, fallback);
+  } else fallback();
+}
+
+/* ===== UI: charts, hover/pin sync, wiring, startup ===== */
+const HAS_CHART = typeof Chart !== 'undefined';
+
+function makeSync(cfg) {
+  return {
+    id: 'sync_' + cfg.name,
+    afterDatasetsDraw(chart) {
+      if (!V) return;
+      const ctx = chart.ctx, a = chart.chartArea, x = chart.scales.x;
+      if (!a || !x) return;
+      const xAt = (abs) => { const i = abs - S.from; return i < 0 || i >= V.n ? null : x.getPixelForValue(i); };
+      const vline = (abs, w, color) => {
+        const px = xAt(abs); if (px === null) return;
+        ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(px, a.top); ctx.lineTo(px, a.bottom); ctx.stroke(); ctx.restore();
+      };
+      const pointAt = (abs) => {
+        const i = abs - S.from;
+        if (i < 0 || i >= V.n || cfg.get(V.rows[i]) === null) return null;
+        const el = chart.getDatasetMeta(cfg.ds).data[i];
+        if (!el) return null;
+        const p = el.getProps(['x', 'y'], true);
+        return isFinite(p.x) && isFinite(p.y) ? p : null;
+      };
+      const dot = (p, r) => {
+        ctx.save();
+        ctx.beginPath(); ctx.arc(p.x, p.y, r + 2, 0, Math.PI * 2); ctx.fillStyle = T['--surface']; ctx.fill();
+        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); ctx.fillStyle = T[cfg.color]; ctx.fill();
+        ctx.restore();
+      };
+      if (S.pinned !== null) vline(S.pinned, 1.5, T['--ink']);
+      if (S.hover !== null && S.hover !== S.pinned) vline(S.hover, 1, T['--ink-3']);
+      if (cfg.rings && S.st === 'ALL') {
+        for (const an of ANN) {
+          const p = pointAt(an.idx); if (!p) continue;
+          ctx.save();
+          ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI * 2); ctx.lineWidth = 4.5; ctx.strokeStyle = T['--surface']; ctx.stroke();
+          ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI * 2); ctx.lineWidth = 2; ctx.strokeStyle = T['--ink']; ctx.stroke();
+          ctx.restore();
+        }
+      }
+      let last = -1;
+      for (let i = V.n - 1; i >= 0; i -= 1) { if (cfg.get(V.rows[i]) !== null) { last = i; break; } }
+      if (last >= 0) {
+        const p = pointAt(S.from + last);
+        if (p) {
+          dot(p, 4.5);
+          if (cfg.label) {
+            ctx.save(); ctx.font = '600 12px ' + FONT; ctx.fillStyle = T['--ink-2']; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+            ctx.fillText(cfg.label(cfg.get(V.rows[last])), p.x + 10, p.y); ctx.restore();
+          }
+        }
+      }
+      [S.pinned, S.hover].forEach((abs) => { if (abs === null) return; const p = pointAt(abs); if (p) dot(p, 5); });
+    }
+  };
+}
+
+const scatterLabels = {
+  id: 'scatterLabels',
+  afterDatasetsDraw(chart) {
+    if (!V || !V.scatter.length) return;
+    const meta = chart.getDatasetMeta(0), ctx = chart.ctx, a = chart.chartArea;
+    const draw = (abs) => {
+      const k = V.scatter.findIndex((p) => p.idx === abs); if (k < 0) return;
+      const el = meta.data[k]; if (!el) return;
+      const p = el.getProps(['x', 'y'], true), text = monthShort(abs), flip = p.x > a.right - 64;
+      ctx.save(); ctx.font = '600 12px ' + FONT; ctx.textBaseline = 'bottom'; ctx.textAlign = flip ? 'right' : 'left'; ctx.lineJoin = 'round';
+      const tx = flip ? p.x - 10 : p.x + 10, ty = p.y - 8;
+      ctx.lineWidth = 4; ctx.strokeStyle = T['--surface']; ctx.strokeText(text, tx, ty);
+      ctx.fillStyle = T['--ink']; ctx.fillText(text, tx, ty); ctx.restore();
+    };
+    if (S.pinned !== null) draw(S.pinned);
+    if (S.hover !== null && S.hover !== S.pinned) draw(S.hover);
+  }
+};
+
+function axisScale(extra) {
+  return Object.assign({ grid: { lineWidth: 1 }, border: {}, ticks: {}, title: { display: false, font: { size: 11 } } }, extra);
+}
+function lineDataset(color, get_value) {
+  return {
+    type: 'line', data: [], borderWidth: 2, tension: 0, spanGaps: false,
+    borderColor: () => T[color], backgroundColor: () => T[color],
+    pointRadius: (c) => { const r = V && V.rows[c.dataIndex]; return r && r.thin && get_value(r) !== null ? 4 : 0; },
+    pointHoverRadius: 0, pointBorderWidth: 2,
+    pointBackgroundColor: () => T['--surface'], pointBorderColor: () => T['--ink-3']
+  };
+}
+const baseOptions = (extra) => Object.assign({
+  responsive: true, maintainAspectRatio: false, animation: false, events: [],
+  layout: { padding: { top: 8, right: 0 } },
+  plugins: { legend: { display: false }, tooltip: { enabled: false } }
+}, extra);
+
+function buildCharts() {
+  if (!HAS_CHART) return;
+  Chart.defaults.font.family = FONT;
+  Chart.defaults.font.size = 12;
+  const xScale = () => axisScale({ grid: { display: false }, ticks: { maxRotation: 0, autoSkipPadding: 10 } });
+  charts.c1 = new Chart($('c1'), {
+    type: 'bar',
+    data: { labels: [], datasets: [
+      { type: 'bar', label: 'Orders', yAxisID: 'yo', data: [], order: 2, backgroundColor: () => T['--orders'], borderWidth: 0, borderRadius: { topLeft: 4, topRight: 4 }, borderSkipped: 'bottom', maxBarThickness: 24, categoryPercentage: 0.9, barPercentage: 0.9 },
+      Object.assign(lineDataset('--rev', (r) => (visibleRate(r) ? r.revenue : null)), { label: 'Revenue', yAxisID: 'yr', order: 1 })
+    ] },
+    options: baseOptions({ scales: {
+      x: xScale(),
+      yr: axisScale({ position: 'left', min: 0, title: { display: true, text: 'Revenue (BRL)', font: { size: 11 } }, ticks: { callback: (v) => 'R$ ' + fmtCompact(v) }, border: { display: false } }),
+      yo: axisScale({ position: 'right', min: 0, title: { display: true, text: 'Orders', font: { size: 11 } }, ticks: { callback: (v) => fmtCompact(v) }, grid: { drawOnChartArea: false }, border: { display: false } })
+    } }),
+    plugins: [makeSync({ name: 'c1', ds: 1, color: '--rev', get: (r) => (visibleRate(r) ? r.revenue : null), rings: true })]
+  });
+  const rateChart = (id, color, get, label, scale) => new Chart($(id), {
+    type: 'line',
+    data: { labels: [], datasets: [Object.assign(lineDataset(color, get), { label: id })] },
+    options: baseOptions({ layout: { padding: { top: 8, right: 46 } }, scales: { x: xScale(), y: axisScale(Object.assign({ border: { display: false } }, scale)) } }),
+    plugins: [makeSync({ name: id, ds: 0, color, get, label, rings: true })]
+  });
+  const reviewGet = (r) => (r.review !== null && visibleRate(r) ? r.review : null);
+  const lateGet = (r) => (r.latePct !== null && visibleRate(r) ? r.latePct : null);
+  charts.c2 = rateChart('c2', '--review', reviewGet, fmtScore, { ticks: { callback: (v) => v.toFixed(1) } });
+  charts.c3 = rateChart('c3', '--late', lateGet, fmtPct, { min: 0, ticks: { callback: (v) => v + '%' } });
+  charts.c2.reviewGet = reviewGet; charts.c3.lateGet = lateGet;
+  charts.c4 = new Chart($('c4'), {
+    type: 'scatter',
+    data: { datasets: [
+      { label: 'Months', data: [], order: 1, borderWidth: 2, hitRadius: 8,
+        pointRadius: (c) => { const p = V && V.scatter[c.dataIndex]; if (!p) return 0; return p.idx === S.hover || p.idx === S.pinned ? p.rad + 2 : p.rad; },
+        pointBackgroundColor: (c) => { const p = V && V.scatter[c.dataIndex]; return p && (p.idx === S.hover || p.idx === S.pinned) ? T['--ink'] : T['--ink-3']; },
+        pointBorderColor: () => T['--surface'] },
+      { type: 'line', label: 'Trend', data: [], order: 2, borderWidth: 2, pointRadius: 0, pointHitRadius: 0, borderColor: () => T['--ink-2'] }
+    ] },
+    options: baseOptions({ layout: { padding: { top: 8, right: 12 } }, scales: {
+      x: axisScale({ type: 'linear', min: 0, title: { display: true, text: 'Late deliveries, % of delivered orders', font: { size: 11 } }, ticks: { callback: (v) => v + '%' } }),
+      y: axisScale({ title: { display: true, text: 'Average review score', font: { size: 11 } }, border: { display: false }, ticks: { callback: (v) => v.toFixed(1) } })
+    } }),
+    plugins: [scatterLabels]
+  });
+}
+
+function restyle() {
+  for (const c of Object.values(charts)) {
+    for (const s of Object.values(c.options.scales)) {
+      s.grid.color = T['--grid']; s.border.color = T['--axis']; s.ticks.color = T['--ink-3']; s.title.color = T['--ink-3'];
+    }
+  }
+}
+
+function updateCharts() {
+  if (!HAS_CHART || !charts.c1) return;
+  const rows = V.rows, labels = rows.map((r) => monthShort(r.idx));
+  const max_rev = Math.max(0, ...rows.map((r) => r.revenue)), max_orders = Math.max(0, ...rows.map((r) => r.orders));
+  const rev_axis = niceAxis(max_rev);
+  const orders_step = Math.max(1, stepUp(max_orders * 1.5 / rev_axis.n));
+  const c1 = charts.c1;
+  c1.data.labels = labels;
+  c1.data.datasets[0].data = rows.map((r) => r.orders);
+  c1.data.datasets[1].data = rows.map((r) => (visibleRate(r) ? r.revenue : null));
+  Object.assign(c1.options.scales.yr, { max: rev_axis.max }); c1.options.scales.yr.ticks.stepSize = rev_axis.step;
+  Object.assign(c1.options.scales.yo, { max: orders_step * rev_axis.n }); c1.options.scales.yo.ticks.stepSize = orders_step;
+
+  const c2 = charts.c2, review_vals = rows.map(charts.c2.reviewGet);
+  const dom = reviewDomain(review_vals.filter((v) => v !== null));
+  c2.data.labels = labels; c2.data.datasets[0].data = review_vals;
+  Object.assign(c2.options.scales.y, { min: dom.min, max: dom.max }); c2.options.scales.y.ticks.stepSize = dom.step;
+  $('c2-sub').textContent = 'Mean of reviews · axis starts at ' + dom.min.toFixed(1);
+
+  const c3 = charts.c3, late_vals = rows.map(charts.c3.lateGet);
+  const late_axis = niceAxis(Math.max(0, ...late_vals.filter((v) => v !== null)), 3, 6);
+  c3.data.labels = labels; c3.data.datasets[0].data = late_vals;
+  Object.assign(c3.options.scales.y, { min: 0, max: late_axis.max }); c3.options.scales.y.ticks.stepSize = late_axis.step;
+
+  const c4 = charts.c4, pts = V.scatter.map((p) => ({ x: p.x, y: p.y }));
+  const fit = pearson(pts);
+  c4.data.datasets[0].data = pts;
+  const sdom = reviewDomain(pts.map((p) => p.y));
+  const sx = niceAxis(Math.max(0, ...pts.map((p) => p.x)), 3, 6);
+  Object.assign(c4.options.scales.x, { min: 0, max: sx.max }); c4.options.scales.x.ticks.stepSize = sx.step;
+  Object.assign(c4.options.scales.y, { min: sdom.min, max: sdom.max }); c4.options.scales.y.ticks.stepSize = sdom.step;
+  if (fit) {
+    const x0 = 0, x1 = sx.max;
+    c4.data.datasets[1].data = [{ x: x0, y: fit.intercept + fit.slope * x0 }, { x: x1, y: fit.intercept + fit.slope * x1 }];
+    $('c4-sub').textContent = 'One dot per month, sized by orders · r = ' + (fit.r < 0 ? '−' : '') + Math.abs(fit.r).toFixed(2) + ' over ' + pts.length + ' months' + (fit.r < -0.3 ? ' · more late deliveries, lower scores' : '');
+  } else {
+    c4.data.datasets[1].data = [];
+    $('c4-sub').textContent = pts.length ? 'One dot per month, sized by orders · too few months for a trend line' : 'No months with enough data';
+  }
+  restyle();
+  Object.values(charts).forEach((c) => c.update('none'));
+}
+
+/* ---- Hover, pin, tooltip ---- */
+const tip = $('tip');
+let tip_for = null;
+function tipHTML(r) {
+  const row = (k, v) => '<div class="t-row"><span>' + k + '</span><b>' + v + '</b></div>';
+  return '<div class="t-month">' + monthLabel(r.idx) + '</div>'
+    + row('Orders', fmtInt(r.orders)) + row('Revenue', fmtBRL(r.revenue, true))
+    + row('Avg review', r.review === null ? '–' : fmtScore(r.review) + ' (' + fmtInt(r.rN) + ' reviews)')
+    + row('Late deliveries', r.latePct === null ? '–' : fmtPct(r.latePct) + ' (' + fmtInt(r.late) + ' of ' + fmtInt(r.deliv) + ')')
+    + (r.thin ? '<div class="t-note">Low volume: fewer than ' + THIN_ORDERS + ' orders.</div>' : '');
+}
+function showTip(abs, e) {
+  if (tip_for !== abs) { tip.innerHTML = tipHTML(V.all[abs]); tip_for = abs; }
+  tip.hidden = false;
+  const w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = e.clientX + 16, y = e.clientY + 16;
+  if (x + w > window.innerWidth - 8) x = e.clientX - w - 16;
+  if (y + h > window.innerHeight - 8) y = e.clientY - h - 16;
+  tip.style.left = Math.max(8, x) + 'px'; tip.style.top = Math.max(8, y) + 'px';
+}
+function hideTip() { tip.hidden = true; tip_for = null; }
+function redrawCharts() { Object.values(charts).forEach((c) => c.draw()); markRows(); }
+function setHover(abs, e) {
+  const changed = S.hover !== abs;
+  S.hover = abs;
+  if (abs === null || !e) hideTip(); else showTip(abs, e);
+  if (changed) redrawCharts();
+}
+function togglePin(abs) { S.pinned = S.pinned === abs ? null : abs; renderPinned(); renderControls(); redrawCharts(); }
+
+function wireCharts() {
+  if (!HAS_CHART) return;
+  ['c1', 'c2', 'c3'].forEach((id) => {
+    const chart = charts[id], cv = $(id);
+    const absAt = (e) => {
+      const px = e.clientX - cv.getBoundingClientRect().left, a = chart.chartArea;
+      if (!a || px < a.left - 4 || px > a.right + 4) return null;
+      const i = Math.round(chart.scales.x.getValueForPixel(px));
+      return i < 0 || i >= V.n ? null : S.from + i;
+    };
+    cv.addEventListener('pointermove', (e) => { const abs = absAt(e); setHover(abs, abs === null ? null : e); });
+    cv.addEventListener('pointerleave', () => setHover(null));
+    cv.addEventListener('click', (e) => { const abs = absAt(e); if (abs !== null) togglePin(abs); });
+  });
+  const cv4 = $('c4');
+  const hit = (e) => {
+    const els = charts.c4.getElementsAtEventForMode(e, 'nearest', { intersect: true }, false).filter((x) => x.datasetIndex === 0);
+    return els.length && V.scatter[els[0].index] ? V.scatter[els[0].index].idx : null;
+  };
+  cv4.addEventListener('pointermove', (e) => { const abs = hit(e); setHover(abs, abs === null ? null : e); });
+  cv4.addEventListener('pointerleave', () => setHover(null));
+  cv4.addEventListener('click', (e) => { const abs = hit(e); if (abs !== null) togglePin(abs); });
+}
+
+/* ---- Render pipeline ---- */
+let raf = 0;
+function schedule() { if (!raf) raf = requestAnimationFrame(() => { raf = 0; renderAll(); }); }
+function renderAll() {
+  computeView();
+  renderControls(); renderNav(); renderCards(); renderAnnots(); renderPinned();
+  updateCharts(); renderStates(); renderTable();
+}
+function setState(st) { S.st = st; savePrefs(); renderAll(); }
+function setRange(from, to) { S.from = from; S.to = to; savePrefs(); renderAll(); }
+
+function wireControls() {
+  $('state-select').addEventListener('change', (e) => setState(e.target.value));
+  $('presets').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { const p = PRESETS[Number(b.dataset.preset)]; setRange(p.from, p.to); } });
+  $('show-thin').addEventListener('change', (e) => { S.showThin = e.target.checked; savePrefs(); renderAll(); });
+  $('reset').addEventListener('click', () => { S.st = 'ALL'; S.from = 0; S.to = N - 1; S.pinned = null; S.hover = null; S.showThin = false; S.metric = 'orders'; S.showAll = false; savePrefs(); renderAll(); });
+  $('metric-seg').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { S.metric = b.dataset.metric; savePrefs(); renderStates(); renderControls(); } });
+  $('states-list').addEventListener('click', (e) => { const b = e.target.closest('.srow'); if (b) setState(b.dataset.st === S.st ? 'ALL' : b.dataset.st); });
+  $('states-toggle').addEventListener('click', () => { S.showAll = !S.showAll; renderStates(); });
+  $('annots').addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (b) { S.pinned = Number(b.dataset.idx); renderPinned(); renderControls(); redrawCharts(); } });
+  $('pinned').addEventListener('click', (e) => { if (e.target.closest('#unpin')) togglePin(S.pinned); });
+  $('copy-csv').addEventListener('click', copyCsv);
+  $('theme-seg').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { S.theme = b.dataset.themeChoice; applyTheme(); savePrefs(); } });
+  const tbody = $('data-table').tBodies[0];
+  tbody.addEventListener('click', (e) => { const b = e.target.closest('.rowbtn'); if (b) togglePin(Number(b.dataset.idx)); });
+  tbody.addEventListener('mouseover', (e) => { const tr = e.target.closest('tr'); if (tr) setHover(Number(tr.dataset.idx), null); });
+  tbody.addEventListener('mouseleave', () => setHover(null));
+  $('data-table').tHead.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    const key = b.dataset.key;
+    S.sort = S.sort.key === key ? { key, dir: -S.sort.dir } : { key, dir: key === 'idx' ? 1 : -1 };
+    renderTable();
+  });
+}
+
+function onThemeChange() { readTheme(); if (V) { updateCharts(); } }
+
+/* ---- Start ---- */
+loadPrefs();
+applyTheme();
+readTheme();
+buildControls();
+wireControls();
+wireNav();
+buildCharts();
+wireCharts();
+renderAll();
+new MutationObserver(onThemeChange).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', onThemeChange);
+let last_width = $('navbox').clientWidth;
+new ResizeObserver(() => { const w = $('navbox').clientWidth; if (w !== last_width) { last_width = w; schedule(); } }).observe($('navbox'));
+
+})();
+</script>
+
+</body></html>

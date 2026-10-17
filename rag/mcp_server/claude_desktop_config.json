@@ -1,0 +1,8 @@
+{
+      "mcpServers": {
+        "olist": {
+          "command": "/Users/<you>/Projects/olist/.venv/bin/python",
+          "args": ["/Users/<you>/Projects/olist/rag/mcp_server/server.py"]
+        }
+      }
+}
